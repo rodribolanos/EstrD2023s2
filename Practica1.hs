@@ -165,4 +165,30 @@ laQueEsMayor p1 p2 = if esMayorQueLaOtra p1 p2
                     then p2 
                     else error "Tienen la misma edad"
 
-                    
+-- Ejercicio 4.1 
+
+data TipoDePokemon = Agua | Fuego | Planta 
+    deriving Show 
+data Pokemon = Poke TipoDePokemon Int 
+    deriving Show
+--                                Porcentaje de energia
+data Entrenador = Ent String Pokemon Pokemon 
+    deriving Show
+--                    Nombre 
+
+lina = Poke Fuego 35
+polito = Poke Agua 60
+pantro = Poke Planta 10
+
+--A 
+-- Resolucion con PM 
+superaA :: Pokemon -> Pokemon -> Bool 
+superaA (Poke Agua _ ) (Poke Fuego _) = True
+superaA (Poke Fuego _ ) (Poke Planta _) = True
+superaA (Poke Planta _ ) (Poke Agua _) = True 
+superaA _ _ = False  
+
+--B 
+
+cantidadDePokemonDe :: TipoDePokemon -> Entrenador -> Int
+cantidadDePokemonDe t e = 
