@@ -49,14 +49,14 @@ iguales Oeste Oeste  = True
 iguales _ _ = False
 
 --C 
--- Realizado con PM. Aplicando a cada Dir un caso para su siguiente 
 siguiente :: Dir -> Dir 
+-- Precondiciones: a es distinto a Oeste
 siguiente a = 
     case a of 
     Norte -> Este 
     Este -> Sur
     Sur -> Oeste 
-    Oeste -> Norte
+    Oeste -> error "Oeste no tiene direccion siguiente."
 
 -- Ejercicio 3.2
 
@@ -176,19 +176,76 @@ data Entrenador = Ent String Pokemon Pokemon
     deriving Show
 --                    Nombre 
 
-lina = Poke Fuego 35
+lina   = Poke Fuego 35
 polito = Poke Agua 60
 pantro = Poke Planta 10
+fox    = Poke Fuego 20
+rodri  = Ent "Lolito" pantro polito
+pablo  = Ent "Pablito" lina fox 
+
+tipo :: Pokemon -> TipoDePokemon 
+tipo (Poke t e) = t 
 
 --A 
 -- Resolucion con PM 
 superaA :: Pokemon -> Pokemon -> Bool 
-superaA (Poke Agua _ ) (Poke Fuego _) = True
+superaA (Poke Agua _ ) (Poke Fuego _)   = True
 superaA (Poke Fuego _ ) (Poke Planta _) = True
-superaA (Poke Planta _ ) (Poke Agua _) = True 
-superaA _ _ = False  
+superaA (Poke Planta _ ) (Poke Agua _)  = True 
+superaA _ _                             = False  
 
 --B 
+-- Division en subtareas. Hay que convertir dos booleanos a una suma de enteros. unoSiCeroSiNo realiza esto. El bool tiene que venir de la pregunta esDeTipo x el pokemon y. esDeTipo resuelve esto 
 
 cantidadDePokemonDe :: TipoDePokemon -> Entrenador -> Int
-cantidadDePokemonDe t e = 
+cantidadDePokemonDe t (Ent _ p1 p2) = unoSiCeroSiNo (esDeTipo t p1) + unoSiCeroSiNo (esDeTipo t p2) 
+
+unoSiCeroSiNo :: Bool -> Int 
+unoSiCeroSiNo True  = 1
+unoSiCeroSiNo False = 0
+
+esDeTipo :: TipoDePokemon -> Pokemon -> Bool 
+esDeTipo t p = igualesTipo t (tipo p)
+
+igualesTipo :: TipoDePokemon -> TipoDePokemon -> Bool 
+igualesTipo Agua Agua      = True 
+igualesTipo Planta Planta  = True 
+igualesTipo Fuego  Fuego   = True
+igualesTipo _      _       = False
+
+--C 
+juntarPokemon :: (Entrenador, Entrenador) -> [Pokemon]
+juntarPokemon (e1, e2) = listaDePokemones e1 ++ listaDePokemones e2 
+
+listaDePokemones :: Entrenador -> [Pokemon]
+listaDePokemones (Ent _ p1 p2) = p1:p2:[]
+
+
+-- Ejercicio 5 
+--A 
+loMismo :: a -> a
+loMismo a = a 
+
+--B 
+siempreSiete :: a -> Int 
+siempreSiete a = 7
+
+--C 
+swap :: (a,b) -> (b,a)
+swap (a,b) = (b,a)
+
+-- Ejercicio 6 
+
+estaVacia :: [a] -> Bool 
+estaVacia [] = True 
+estaVacia _ = False
+
+elPrimero :: [a] -> a 
+--Precondiciones: La lista no es vacia. 
+elPrimero (a:_) = a
+
+sinElPrimero :: [a] -> [a]
+sinElPrimero (_: x) = x 
+
+splitHead :: [a] -> (a, [a])
+splitHead x = (elPrimero x, sinElPrimero x)
