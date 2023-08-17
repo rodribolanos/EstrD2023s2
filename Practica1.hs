@@ -232,7 +232,7 @@ elPrimero :: [a] -> a
 elPrimero (a:_) = a
 
 sinElPrimero :: [a] -> [a]
-sinElPrimero (_: x) = x 
+sinElPrimero (_: xs) = xs 
 
 splitHead :: [a] -> (a, [a])
-splitHead x = (elPrimero x, sinElPrimero x)
+splitHead xs = (elPrimero xs, sinElPrimero xs)
