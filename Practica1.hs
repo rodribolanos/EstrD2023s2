@@ -78,29 +78,16 @@ empiezaConM _ = False
 
 --C 
 vieneDespues :: DiaDeSemana -> DiaDeSemana -> Bool
-vieneDespues a b =  igualesDia (siguienteDia a ) b
+vieneDespues a b =  numeroDia a > numeroDia b 
 
-
-igualesDia :: DiaDeSemana -> DiaDeSemana -> Bool
-igualesDia Lunes Lunes          = True
-igualesDia Martes Martes        = True
-igualesDia Miercoles Miercoles  = True 
-igualesDia Jueves Jueves        = True 
-igualesDia Viernes Viernes      = True 
-igualesDia Sabado Sabado        = True
-igualesDia _ _                  = False
-
-
-siguienteDia :: DiaDeSemana -> DiaDeSemana 
-siguienteDia a = 
-    case a of 
-    Lunes     -> Martes 
-    Martes    -> Miercoles
-    Miercoles -> Jueves
-    Jueves    -> Viernes
-    Viernes   -> Sabado 
-    Sabado    -> Domingo 
-
+numeroDia :: DiaDeSemana -> Int
+numeroDia Lunes     = 1
+numeroDia Martes    = 2
+numeroDia Miercoles = 3
+numeroDia Jueves    = 4
+numeroDia Viernes   = 5
+numeroDia Sabado    = 6
+numeroDia Domingo   = 7
 --D 
 -- Resuelto mediante PM. Aplicando los unicos dos casos de FALSO al principio, y el resto de casos son verdaderos
 estaEnElMedio :: DiaDeSemana -> Bool
