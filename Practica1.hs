@@ -32,6 +32,7 @@ data Dir = Norte | Sur | Este | Oeste
     deriving Show
 
 --A 
+-- Realizado con PM. Aplicando a cada Dir un caso de su opuesto.
 opuesto :: Dir -> Dir 
 opuesto Norte = Sur 
 opuesto Este = Oeste
@@ -39,6 +40,7 @@ opuesto Sur = Norte
 opuesto Oeste = Este 
 
 --B 
+-- Realizado con PM. Aplicando a cada combinacion de pares de Dir un caso posible.
 iguales :: Dir -> Dir -> Bool
 iguales Norte Norte  = True
 iguales Este Este    = True
@@ -47,6 +49,7 @@ iguales Oeste Oeste  = True
 iguales _ _ = False
 
 --C 
+-- Realizado con PM. Aplicando a cada Dir un caso para su siguiente 
 siguiente :: Dir -> Dir 
 siguiente a = 
     case a of 
@@ -75,7 +78,7 @@ empiezaConM _ = False
 
 --C 
 vieneDespues :: DiaDeSemana -> DiaDeSemana -> Bool
-vieneDespues a b =  iguales ((siguienteDia a ) b)
+vieneDespues a b =  igualesDia (siguienteDia a ) b
 
 
 igualesDia :: DiaDeSemana -> DiaDeSemana -> Bool
@@ -85,16 +88,81 @@ igualesDia Miercoles Miercoles  = True
 igualesDia Jueves Jueves        = True 
 igualesDia Viernes Viernes      = True 
 igualesDia Sabado Sabado        = True
-iguales _ _ = False
+igualesDia _ _                  = False
 
 
 siguienteDia :: DiaDeSemana -> DiaDeSemana 
 siguienteDia a = 
     case a of 
-    Lunes -> Martes 
-    Martes -> Miercoles
+    Lunes     -> Martes 
+    Martes    -> Miercoles
     Miercoles -> Jueves
-    Jueves -> Viernes
-    Viernes -> Sabado 
-    Sabado -> Domingo 
-    Domingo -> Lunes
+    Jueves    -> Viernes
+    Viernes   -> Sabado 
+    Sabado    -> Domingo 
+
+--D 
+-- Resuelto mediante PM. Aplicando los unicos dos casos de FALSO al principio, y el resto de casos son verdaderos
+estaEnElMedio :: DiaDeSemana -> Bool
+estaEnElMedio Lunes    = False 
+estaEnElMedio Domingo  = False 
+estaEnElMedio _        = True 
+
+-- Ejercicio 3
+
+--A 
+negar :: Bool -> Bool 
+negar True = False 
+negar False = True 
+
+--B 
+implica :: Bool -> Bool -> Bool 
+implica False _    = True 
+implica _   b   = b 
+
+--C 
+yTambien :: Bool -> Bool -> Bool 
+yTambien  False _ = False
+yTambien  True b  = b        -- En caso de venir False, devuelve False, en caso de venir True, devuelve True. 
+
+--D 
+oBien :: Bool -> Bool -> Bool 
+oBien True _ = True 
+oBien False b = b -- En caso de venir True: False + True (b) = True (b). En caso de venir False: False + False (b) = False (b)
+
+
+
+-- Ejercicio 4 
+
+data Persona = P String Int 
+    deriving Show 
+            --   Nombre  Edad 
+
+-- Ejemplo de persona: 
+rodrigo = P "Rodrigo" 19 
+martina = P "Martina" 19 
+
+nombre :: Persona -> String 
+nombre (P n e) = n 
+
+edad :: Persona -> Int 
+edad (P n e) = e 
+
+crecer :: Persona -> Persona 
+crecer (P n e) = P n (e + 1)
+
+cambioDeNombre :: String -> Persona -> Persona 
+cambioDeNombre nn (P n e) = P nn e
+
+esMayorQueLaOtra :: Persona -> Persona -> Bool 
+esMayorQueLaOtra p1 p2 = edad p1 > edad p2 
+
+laQueEsMayor :: Persona -> Persona -> Persona 
+-- OBSERVACIONES: En caso de que p1 y p2 tengan la misma edad, devuelve p2 
+laQueEsMayor p1 p2 = if esMayorQueLaOtra p1 p2 
+                     then p1 
+                    else if esMayorQueLaOtra p2 p1 
+                    then p2 
+                    else error "Tienen la misma edad"
+
+                    
