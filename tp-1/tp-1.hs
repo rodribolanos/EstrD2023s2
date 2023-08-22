@@ -116,7 +116,7 @@ yTambien  _     b  = b        -- En caso de venir False, devuelve False, en caso
 --D 
 oBien :: Bool -> Bool -> Bool 
 oBien True _ = True 
-oBien False b = b -- En caso de venir True: False + True (b) = True (b). En caso de venir False: False + False (b) = False (b)
+oBien _    b = b -- En caso de venir True: False + True (b) = True (b). En caso de venir False: False + False (b) = False (b)
 
 
 
