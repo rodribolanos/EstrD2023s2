@@ -233,6 +233,7 @@ elPrimero :: [a] -> a
 elPrimero (a:_) = a
 
 sinElPrimero :: [a] -> [a]
+-- PRECONDICIONES: La lista [a] no es vacia.
 sinElPrimero (_: xs) = xs 
 
 splitHead :: [a] -> (a, [a])
