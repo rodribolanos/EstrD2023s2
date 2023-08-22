@@ -190,7 +190,7 @@ cantidadDePokemonDe t (Ent _ p1 p2) = unoSiCeroSiNo (esDeTipo t p1) + unoSiCeroS
 
 unoSiCeroSiNo :: Bool -> Int 
 unoSiCeroSiNo True  = 1
-unoSiCeroSiNo False = 0
+unoSiCeroSiNo _     = 0
 
 esDeTipo :: TipoDePokemon -> Pokemon -> Bool 
 esDeTipo t p = igualesTipo t (tipo p)
