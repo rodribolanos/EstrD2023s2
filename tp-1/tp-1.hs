@@ -110,8 +110,8 @@ implica _   b   = b
 
 --C 
 yTambien :: Bool -> Bool -> Bool 
-yTambien  False _ = False
-yTambien  True b  = b        -- En caso de venir False, devuelve False, en caso de venir True, devuelve True. 
+yTambien  False _  = False
+yTambien  _     b  = b        -- En caso de venir False, devuelve False, en caso de venir True, devuelve True. 
 
 --D 
 oBien :: Bool -> Bool -> Bool 
