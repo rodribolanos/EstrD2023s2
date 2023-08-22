@@ -146,7 +146,7 @@ esMayorQueLaOtra :: Persona -> Persona -> Bool
 esMayorQueLaOtra p1 p2 = edad p1 > edad p2 
 
 laQueEsMayor :: Persona -> Persona -> Persona 
--- OBSERVACIONES: En caso de que p1 y p2 tengan la misma edad, devuelve p2 
+--PRECONDICIONES: p1 y p2 tienen no tienen la misma edad 
 laQueEsMayor p1 p2 = if esMayorQueLaOtra p1 p2 
                      then p1 
                     else if esMayorQueLaOtra p2 p1 
