@@ -10,6 +10,7 @@ sumar a b = a + b
 
 --C
 divisionYResto :: Int -> Int -> (Int, Int)
+-- Precondicion: b es distinto de 0 
 divisionYResto a b = (div a b , mod a b)
 
 --D 
