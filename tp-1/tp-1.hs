@@ -236,4 +236,5 @@ sinElPrimero :: [a] -> [a]
 sinElPrimero (_: xs) = xs 
 
 splitHead :: [a] -> (a, [a])
+-- PRECONDICIONES: La lista [a] no es vacia. 
 splitHead xs = (elPrimero xs, sinElPrimero xs)
