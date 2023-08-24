@@ -224,3 +224,42 @@ hayAlgunoDeTipo t (p:ps) = esDeTipo t p || hayAlgunoDeTipo t ps
 -- hayAlgunoDeTipo t ps = longitud (losDeTipo t ps) > 0 
 
 
+
+
+-- EJERCICIO 3.3 
+
+data Seniority = Junior | Semisenior | Senior
+    deriving Show
+data Proyecto = ConsProyecto String
+    deriving Show
+data Rol = Developer Seniority Proyecto | Management Seniority Proyecto 
+    deriving Show
+data Empresa = ConsEmpresa [Rol] 
+    deriving Show
+
+edd = ConsProyecto "Estructura De Datos 2023"
+obj2 = ConsProyecto "Objetos 2 2023"
+obj1 = ConsProyecto "Objetos 1 2023"
+
+programador1  = Developer Junior edd 
+p2 = Management Junior obj1 
+p3  = Developer Semisenior obj2 
+p4  = Management Senior edd
+
+unq = ConsEmpresa [programador1, p2, p3, p4] 
+proyectos :: Empresa -> [Proyecto]
+proyectos e1 = proyectosDe (roles e1)
+
+roles :: Empresa -> [Rol]
+roles (ConsEmpresa rs) = rs 
+
+proyectosDe :: [Rol] -> [Proyecto]
+proyectosDe   []    = [] 
+proyectosDe (x:xs) = proyecto x : proyectosDe xs 
+
+proyecto :: Rol -> Proyecto
+proyecto (Developer _ p)  = p
+proyecto (Management _ p) = p
+
+nombreProyecto :: Proyecto -> String 
+nombreProyecto (ConsProyecto n) = n
