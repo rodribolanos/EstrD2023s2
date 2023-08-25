@@ -242,7 +242,7 @@ obj1 = ConsProyecto "Objetos 1 2023"
 
 programador1  = Developer Junior edd 
 p2 = Management Junior obj1 
-p3  = Developer Semisenior obj2 
+p3  = Developer Senior obj2 
 p4  = Management Senior edd
 
 unq = ConsEmpresa [programador1, p2, p3, p4] 
@@ -265,22 +265,26 @@ estaEnLaLista p1 (p2:ps) = nombreProyecto p1 == nombreProyecto p2 || estaEnLaLis
 
 -- EJERCICIO 3.2 B 
 losDevSenior :: Empresa -> [Proyecto] -> Int 
-losDevSenior e ps = longitud (los_QueTrabajanEn (losDeveloper (losSenior (roles e) )) ps )
+losDevSenior (ConsEmpresa rs) ps = cantDevSeniorEn_QueTrabajenEn rs ps
 
-losDeveloper :: [Rol] -> [Rol] 
-losDeveloper [] = []
-losDeveloper (x:xs) = if esDeveloper x 
-                      then x : losDeveloper xs 
-                      else losDeveloper xs 
+cantDevSeniorEn_QueTrabajenEn :: [Rol] -> [Proyecto] -> Int 
+cantDevSeniorEn_QueTrabajenEn _ [] = 0 
+cantDevSeniorEn_QueTrabajenEn rs (p:ps) = cantDevSeniorEn_ConProyecto rs p + cantDevSeniorEn_QueTrabajenEn rs ps 
+
+cantDevSeniorEn_ConProyecto :: [Rol] -> Proyecto -> Int 
+cantDevSeniorEn_ConProyecto [] _ = 0
+cantDevSeniorEn_ConProyecto (r:rs) p = unoSiCeroSiNo (esDevSenior r && trabajaEn r p) + cantDevSeniorEn_ConProyecto rs p 
+
+esDevSenior :: Rol -> Bool 
+esDevSenior r = esDeveloper r && esSenior (seniority r) 
 
 esDeveloper :: Rol -> Bool 
 esDeveloper (Developer _ _) = True 
 esDeveloper _               = False 
-losSenior :: [Rol] -> [Rol]
-losSenior [] = []
-losSenior (r:rs) = if esSenior (seniority r)
-                   then r : losSenior rs 
-                   else losSenior rs  
+
+esSeniorElRol :: Rol -> Bool 
+esSeniorElRol (Developer seniority _)  = esSenior seniority 
+esSeniorElRol (Management seniority _) = esSenior seniority 
 
 esSenior :: Seniority -> Bool 
 esSenior Senior = True 
@@ -326,9 +330,9 @@ trabajaEn r p = nombreProyecto (proyecto r) == nombreProyecto p
 
 asignadosPorProyecto :: Empresa -> [(Proyecto, Int)]
 -- Estrategia: Obtener la lista de proyectos sin repeticion. A cada proyecto, asignarle mediante un nuevo recorrido el numero de personas involucradas en una tupla. 
-asignadosPorProyecto e = noSeElNombreDeEsto (sinRepetidosProyectos (proyectosDeRoles (roles e))) e 
+asignadosPorProyecto e = listaDeProyectosConCantidad (sinRepetidosProyectos (proyectosDeRoles (roles e))) e 
 
-noSeElNombreDeEsto :: [Proyecto] -> Empresa -> [(Proyecto, Int)]
+listaDeProyectosConCantidad :: [Proyecto] -> Empresa -> [(Proyecto, Int)]
 -- En este punto ya tengo la lista de proyectos sin repetir.
-noSeElNombreDeEsto []    _  = [] 
-noSeElNombreDeEsto (x:xs) e = (x, empleadosQueTrabajenEn x (roles e)) : noSeElNombreDeEsto xs e          
+listaDeProyectosConCantidad []    _  = [] 
+listaDeProyectosConCantidad (x:xs) e = (x, empleadosQueTrabajenEn x (roles e)) : listaDeProyectosConCantidad xs e          
