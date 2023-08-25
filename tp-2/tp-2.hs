@@ -38,29 +38,29 @@ unoSiCeroSiNo _    = 0
 
 
 losMenoresA :: Int -> [Int] -> [Int]
-losMenoresA _ [] = []
+losMenoresA _ []     = []
 losMenoresA n (x:xs) = if (x < n)
                        then x : losMenoresA n xs 
                        else losMenoresA n xs 
 
 lasDeLongitudMayorA :: Int -> [[a]] -> [[a]]
-lasDeLongitudMayorA _ [] = []
+lasDeLongitudMayorA _ []     = []
 lasDeLongitudMayorA n (x:xs) = if longitud x > n 
                                then x : lasDeLongitudMayorA n xs 
                                else lasDeLongitudMayorA n xs 
 
 agregarAlFinal :: [a] -> a -> [a]
-agregarAlFinal [] b = [b]
+agregarAlFinal [] b     = [b]
 agregarAlFinal (x:xs) b = x : agregarAlFinal xs b 
 
 agregar :: [a] -> [a] -> [a]
-agregar [] bs = bs 
-agregar (a:as) bs = agregar as bs  
+agregar [] bs     = bs 
+agregar (a:as) bs = a : agregar as bs   
 
 zipMaximos :: [Int] -> [Int] -> [Int]
 -- Devuelve una lista donde el elemento en la posicion n es el maximo entre el elemento n de la primera lista y de la segunda lista. 
-zipMaximos [] _ = [] 
-zipMaximos _ [] = [] 
+zipMaximos [] _          = [] 
+zipMaximos _ []          = [] 
 zipMaximos (x:xs) (p:ps) = maxDelPar (x,p) : zipMaximos xs ps 
     
     
@@ -71,10 +71,13 @@ maxDelPar (a, b) = if a > b
                    then a 
                    else b 
 
---elMinimo :: Ord a => [a] -> a
--- DUDA 
---elMinimo [] =   
---elMinimo (x:xs) =  
+elMinimo :: Ord a => [a] -> a
+-- PRECONDICION: La lista tiene al menos 1 elemento  
+elMinimo []     = error "La lista no tiene elementos" 
+elMinimo [a]    = a
+elMinimo (x:xs) = if x < elMinimo xs 
+                  then x 
+                  else elMinimo xs  
 
 
 
@@ -94,7 +97,7 @@ repetir n x  = x : repetir (n-1) x
 
 losPrimeros :: Int -> [a] -> [a]
 losPrimeros _ []     = []
-losPrimeros 0 _      = []
+losPrimeros 0  _     = []
 losPrimeros n (x:xs) = x : losPrimeros (n-1) xs
 
 sinLosPrimeros :: Int -> [a] -> [a]
@@ -114,23 +117,24 @@ polo  = ConsP "Polo"    4
 agustin = ConsP "Agustin" 17
 
 mayoresA :: Int -> [Persona] -> [Persona]
-mayoresA _ [] = [] 
+mayoresA _ []     = [] 
 mayoresA n (x:xs) = if edad x > n 
                     then x : mayoresA n xs
                     else mayoresA n xs  
 
 edad :: Persona -> Int 
-edad (ConsP n e) = e 
+edad (ConsP _ e) = e 
 
 promedioEdad :: [Persona] -> Int 
 promedioEdad xs = div (sumaDeEdades xs) (longitud xs)  
 
 sumaDeEdades :: [Persona] -> Int 
-sumaDeEdades [] = 0 
+sumaDeEdades []     = 0 
 sumaDeEdades (x:xs) = edad x + sumaDeEdades xs 
 
 elMasViejo :: [Persona] -> Persona
 --PRECONDICION: La lista posee al menos una persona 
+elMasViejo []     = error "La lista no tiene ninguna persona."
 elMasViejo (x:[]) = x 
 elMasViejo (x:xs) = if edad x > edad (elMasViejo xs)
                     then x 
