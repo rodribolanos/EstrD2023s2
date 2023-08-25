@@ -1,43 +1,40 @@
 -- Practica 2 
 
 sumatoria :: [Int] -> Int 
-sumatoria [] = 0 
+sumatoria []     = 0 
 sumatoria (x:xs) = x + sumatoria xs 
 
--- . longitud :: [a] -> Int
---Dada una lista de elementos de algún tipo devuelve el largo de esa lista, es decir, la cantidad
--- de elementos que posee.
 longitud :: [a] -> Int 
-longitud [] = 0
+longitud []     = 0
 longitud (x:xs) = 1 + longitud xs
 
 sucesores :: [Int] -> [Int]
-sucesores [] = []
+sucesores []     = []
 sucesores (x:xs) = (x+1) : sucesores xs 
 
 conjuncion :: [Bool] -> Bool 
-conjuncion [] = True 
+conjuncion []     = True 
 conjuncion (x:xs) = x && conjuncion xs
 
 disyucion :: [Bool] -> Bool 
-disyucion [] = False
+disyucion []     = False
 disyucion (x:xs) = x  || disyucion xs 
 
 aplanar :: [[a]] -> [a]
-aplanar [] = []
+aplanar []     = []
 aplanar (x:xs) = x ++ aplanar xs
 
 pertenece :: Eq a => a -> [a] -> Bool 
-pertenece _ [] = False 
+pertenece _ []     = False 
 pertenece e (x:xs) = (e == x) || pertenece e xs
 
 apariciones :: Eq a => a -> [a] -> Int
-apariciones _ [] = 0 
+apariciones _ []     = 0 
 apariciones e (x:xs) =  unoSiCeroSiNo(e == x) + apariciones e xs 
 
 unoSiCeroSiNo :: Bool -> Int 
 unoSiCeroSiNo True = 1 
-unoSiCeroSiNo _ = 0 
+unoSiCeroSiNo _    = 0 
 
 
 losMenoresA :: Int -> [Int] -> [Int]
@@ -248,14 +245,57 @@ p4  = Management Senior edd
 
 unq = ConsEmpresa [programador1, p2, p3, p4] 
 proyectos :: Empresa -> [Proyecto]
-proyectos e1 = proyectosDe (roles e1)
+proyectos e1 = sinRepetidosProyectos (proyectosDeRoles (roles e1))
+
+proyectosDeRoles :: [Rol] -> [Proyecto]
+proyectosDeRoles   []    = [] 
+proyectosDeRoles (x:xs) = proyecto x : proyectosDeRoles xs 
+
+sinRepetidosProyectos :: [Proyecto] -> [Proyecto]
+sinRepetidosProyectos [] = []
+sinRepetidosProyectos (x:xs) = if not (estaEnLaLista x xs) 
+                               then x : sinRepetidosProyectos xs 
+                               else sinRepetidosProyectos xs 
+
+estaEnLaLista :: Proyecto -> [Proyecto] -> Bool 
+estaEnLaLista _ []       = False 
+estaEnLaLista p1 (p2:ps) = nombreProyecto p1 == nombreProyecto p2 || estaEnLaLista p1 ps 
+
+-- EJERCICIO 3.2 B 
+losDevSenior :: Empresa -> [Proyecto] -> Int 
+losDevSenior e ps = longitud (los_QueTrabajanEn (losDeveloper (losSenior (roles e) )) ps )
+
+losDeveloper :: [Rol] -> [Rol] 
+losDeveloper [] = []
+losDeveloper (x:xs) = if esDeveloper x 
+                      then x : losDeveloper xs 
+                      else losDeveloper xs 
+
+esDeveloper :: Rol -> Bool 
+esDeveloper (Developer _ _) = True 
+esDeveloper _               = False 
+losSenior :: [Rol] -> [Rol]
+losSenior [] = []
+losSenior (r:rs) = if esSenior (seniority r)
+                   then r : losSenior rs 
+                   else losSenior rs  
+
+esSenior :: Seniority -> Bool 
+esSenior Senior = True 
+esSenior _ = False 
+
+los_QueTrabajanEn :: [Rol] -> [Proyecto] -> [Rol] 
+los_QueTrabajanEn [] _= [] 
+los_QueTrabajanEn (r:rs) ps = if trabajaEnAlgun r ps
+                              then r : los_QueTrabajanEn rs ps 
+                              else los_QueTrabajanEn rs ps
+
+trabajaEnAlgun :: Rol -> [Proyecto] -> Bool 
+trabajaEnAlgun _  []    = False
+trabajaEnAlgun r (p:ps) = nombreProyecto (proyecto r) == nombreProyecto p || trabajaEnAlgun r ps 
 
 roles :: Empresa -> [Rol]
 roles (ConsEmpresa rs) = rs 
-
-proyectosDe :: [Rol] -> [Proyecto]
-proyectosDe   []    = [] 
-proyectosDe (x:xs) = proyecto x : proyectosDe xs 
 
 proyecto :: Rol -> Proyecto
 proyecto (Developer _ p)  = p
@@ -263,3 +303,30 @@ proyecto (Management _ p) = p
 
 nombreProyecto :: Proyecto -> String 
 nombreProyecto (ConsProyecto n) = n
+
+seniority :: Rol -> Seniority 
+seniority (Developer r _) = r
+seniority (Management r _) = r
+
+cantQueTrabajaEn :: [Proyecto] -> Empresa -> Int 
+cantQueTrabajaEn [] _ = 0 
+cantQueTrabajaEn (p:ps) e = empleadosQueTrabajenEn p (roles e) + cantQueTrabajaEn ps e 
+
+empleadosQueTrabajenEn :: Proyecto -> [Rol] -> Int 
+empleadosQueTrabajenEn _ []     = 0 
+empleadosQueTrabajenEn p (r:rs) = unoSiCeroSiNo (trabajaEn r p) + empleadosQueTrabajenEn p rs
+
+trabajaEn :: Rol -> Proyecto -> Bool
+trabajaEn r p = nombreProyecto (proyecto r) == nombreProyecto p 
+
+
+-- EJERCICIO 3.2 D
+
+asignadosPorProyecto :: Empresa -> [(Proyecto, Int)]
+-- Estrategia: Obtener la lista de proyectos sin repeticion. A cada proyecto, asignarle mediante un nuevo recorrido el numero de personas involucradas en una tupla. 
+asignadosPorProyecto e = noSeElNombreDeEsto (sinRepetidosProyectos (proyectosDeRoles (roles e))) e 
+
+noSeElNombreDeEsto :: [Proyecto] -> Empresa -> [(Proyecto, Int)]
+-- En este punto ya tengo la lista de proyectos sin repetir.
+noSeElNombreDeEsto []    _  = [] 
+noSeElNombreDeEsto (x:xs) e = (x, empleadosQueTrabajenEn x (roles e)) : noSeElNombreDeEsto xs e          
