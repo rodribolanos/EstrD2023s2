@@ -154,7 +154,7 @@ polito = ConsPokemon  Agua 60
 pantro = ConsPokemon  Planta 10
 fox    = ConsPokemon  Fuego 20
 rodri  = ConsEntrenador "Lolito"  [pantro, polito]
-pablo  = ConsEntrenador "Pablito" [lina, fox] 
+martu  = ConsEntrenador "Gorda" [lina, fox] 
 
 -- A 
 cantPokemon :: Entrenador -> Int 
@@ -162,7 +162,11 @@ cantPokemon (ConsEntrenador _ ps) = longitud ps
 
 -- B 
 cantPokemonDe :: TipoDePokemon -> Entrenador -> Int 
-cantPokemonDe t (ConsEntrenador _ ps) = longitud (losDeTipo t ps)
+cantPokemonDe t (ConsEntrenador _ ps) = cantPokemonDeTipo_En t ps
+
+cantPokemonDeTipo_En :: TipoDePokemon -> [Pokemon] -> Int
+cantPokemonDeTipo_En _ [] = 0
+cantPokemonDeTipo_En t (p:ps) = unoSiCeroSiNo (esDeTipo t p) + cantPokemonDeTipo_En t ps 
 
 losDeTipo :: TipoDePokemon -> [Pokemon] -> [Pokemon]
 -- Devuelve la lista resultante unicamente con los pokemon del tipo dado 
@@ -186,24 +190,22 @@ tipo (ConsPokemon t _) = t
 -- C 
 
 cuantosDeTipo_LeGananATodosLosDe_ :: TipoDePokemon -> Entrenador -> Entrenador -> Int
-cuantosDeTipo_LeGananATodosLosDe_ t e1 e2 = cuantasVictoriasTienen_FrenteA (losDeTipo t (pokemonsDe e1)) (pokemonsDe e2)
+cuantosDeTipo_LeGananATodosLosDe_ t e1 e2 = if tieneDeTipo t e1 && losPokemonsDe_SonDerrotadosPor e2 t 
+                                            then cantPokemonDe t e1 
+                                            else 0  
 
 pokemonsDe :: Entrenador -> [Pokemon] 
 pokemonsDe (ConsEntrenador _ ps) = ps
 
-cuantasVictoriasTienen_FrenteA :: [Pokemon] -> [Pokemon] -> Int 
-cuantasVictoriasTienen_FrenteA [] _ = 0 
-cuantasVictoriasTienen_FrenteA (x:xs) ys = cuantosPokemonsLeGana x ys + cuantasVictoriasTienen_FrenteA xs ys 
+losPokemonsDe_SonDerrotadosPor :: Entrenador -> TipoDePokemon -> Bool
+losPokemonsDe_SonDerrotadosPor e t = laLista_EsDerrotadaPor (pokemonsDe e) t
 
-cuantosPokemonsLeGana :: Pokemon -> [Pokemon] -> Int 
-cuantosPokemonsLeGana _ [] = 0 
-cuantosPokemonsLeGana p (x:xs) = unoSiCeroSiNo (superaAPokemon p x) + cuantosPokemonsLeGana p xs 
+laLista_EsDerrotadaPor :: [Pokemon] -> TipoDePokemon -> Bool 
+laLista_EsDerrotadaPor [] _ = True 
+laLista_EsDerrotadaPor (x:xs) t = superaATipo t (tipo x) && laLista_EsDerrotadaPor xs t  
 
 superaAPokemon :: Pokemon -> Pokemon -> Bool 
-superaAPokemon (ConsPokemon  t1 _ )  (ConsPokemon t2 _)  = superaATipo t1 t2
-superaAPokemon (ConsPokemon  t1 _ ) (ConsPokemon t2 _)   = superaATipo t1 t2
-superaAPokemon (ConsPokemon  t1 _ ) (ConsPokemon t2 _)   = superaATipo t1 t2 
-superaAPokemon _                           _             = False 
+superaAPokemon (ConsPokemon  t1 _ )  (ConsPokemon t2 _)  = superaATipo t1 t2 
 
 superaATipo :: TipoDePokemon -> TipoDePokemon -> Bool 
 superaATipo Agua Fuego   = True 
@@ -222,10 +224,6 @@ tieneDeTipo t (ConsEntrenador _ ps) = hayAlgunoDeTipo t ps
 hayAlgunoDeTipo :: TipoDePokemon -> [Pokemon] -> Bool 
 hayAlgunoDeTipo _ [] = False 
 hayAlgunoDeTipo t (p:ps) = esDeTipo t p || hayAlgunoDeTipo t ps 
--- hayAlgunoDeTipo t ps = longitud (losDeTipo t ps) > 0 
-
-
-
 
 -- EJERCICIO 3.3 
 
