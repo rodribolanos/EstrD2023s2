@@ -298,7 +298,7 @@ los_QueTrabajanEn (r:rs) ps = if trabajaEnAlgun r ps
 
 trabajaEnAlgun :: Rol -> [Proyecto] -> Bool 
 trabajaEnAlgun _  []    = False
-trabajaEnAlgun r (p:ps) = nombreProyecto (proyecto r) == nombreProyecto p || trabajaEnAlgun r ps 
+trabajaEnAlgun r (p:ps) = sonElMismoProyecto (proyecto r) p || trabajaEnAlgun r ps 
 
 roles :: Empresa -> [Rol]
 roles (ConsEmpresa rs) = rs 
@@ -330,9 +330,18 @@ trabajaEn r p = nombreProyecto (proyecto r) == nombreProyecto p
 
 asignadosPorProyecto :: Empresa -> [(Proyecto, Int)]
 -- Estrategia: Obtener la lista de proyectos sin repeticion. A cada proyecto, asignarle mediante un nuevo recorrido el numero de personas involucradas en una tupla. 
-asignadosPorProyecto e = listaDeProyectosConCantidad (sinRepetidosProyectos (proyectosDeRoles (roles e))) e 
+asignadosPorProyecto e = listaDeProyectosConCantidad (proyectosDeRoles (roles e))  
 
-listaDeProyectosConCantidad :: [Proyecto] -> Empresa -> [(Proyecto, Int)]
--- En este punto ya tengo la lista de proyectos sin repetir.
-listaDeProyectosConCantidad []    _  = [] 
-listaDeProyectosConCantidad (x:xs) e = (x, empleadosQueTrabajenEn x (roles e)) : listaDeProyectosConCantidad xs e          
+listaDeProyectosConCantidad :: [Proyecto] -> [(Proyecto, Int)] 
+listaDeProyectosConCantidad []     = [] 
+listaDeProyectosConCantidad (p:ps) = agregarProyecto_SiNoSumar_ p (listaDeProyectosConCantidad ps)
+
+agregarProyecto_SiNoSumar_ :: Proyecto ->[(Proyecto, Int)] -> [(Proyecto, Int)]
+agregarProyecto_SiNoSumar_ p []               = [(p,1)]
+agregarProyecto_SiNoSumar_ p ((pr,num):prs) = if sonElMismoProyecto p pr  
+                                                then (pr, num+1) : prs 
+                                                else (pr,num) : agregarProyecto_SiNoSumar_ p prs      
+
+sonElMismoProyecto :: Proyecto -> Proyecto -> Bool 
+sonElMismoProyecto p1 p2 = nombreProyecto p1 == nombreProyecto p2
+          
