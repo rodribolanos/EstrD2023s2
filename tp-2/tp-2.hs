@@ -82,7 +82,7 @@ elMinimo (x:xs) = if x < elMinimo xs
 
 
 --Ejercicio 2. Recursion sobre numeros 
-
+--PRECONDICION: El numero dado no es negativo. Para todos los casos de recursion sobre numeros.
 factorial :: Int -> Int 
 factorial 0 = 1 
 factorial n = n * factorial (n-1) 
