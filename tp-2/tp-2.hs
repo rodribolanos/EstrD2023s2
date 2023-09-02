@@ -22,7 +22,7 @@ disyucion (x:xs) = x  || disyucion xs
 
 aplanar :: [[a]] -> [a]
 aplanar []     = []
-aplanar (x:xs) = x ++ aplanar xs
+aplanar (xs:xss) = xs ++ aplanar xss
 
 pertenece :: Eq a => a -> [a] -> Bool 
 pertenece _ []     = False 
@@ -30,11 +30,11 @@ pertenece e (x:xs) = (e == x) || pertenece e xs
 
 apariciones :: Eq a => a -> [a] -> Int
 apariciones _ []     = 0 
-apariciones e (x:xs) =  unoSiCeroSiNo(e == x) + apariciones e xs 
+apariciones e (x:xs) =  unoSi(e == x) + apariciones e xs 
 
-unoSiCeroSiNo :: Bool -> Int 
-unoSiCeroSiNo True = 1 
-unoSiCeroSiNo _    = 0 
+unoSi :: Bool -> Int 
+unoSi True = 1 
+unoSi _    = 0 
 
 
 losMenoresA :: Int -> [Int] -> [Int]
@@ -59,8 +59,8 @@ agregar (a:as) bs = a : agregar as bs
 
 zipMaximos :: [Int] -> [Int] -> [Int]
 -- Devuelve una lista donde el elemento en la posicion n es el maximo entre el elemento n de la primera lista y de la segunda lista. 
-zipMaximos [] _          = [] 
-zipMaximos _ []          = [] 
+zipMaximos [] ps          = ps 
+zipMaximos xs []          = xs 
 zipMaximos (x:xs) (p:ps) = maxDelPar (x,p) : zipMaximos xs ps 
     
     
@@ -166,7 +166,7 @@ cantPokemonDe t (ConsEntrenador _ ps) = cantPokemonDeTipo_En t ps
 
 cantPokemonDeTipo_En :: TipoDePokemon -> [Pokemon] -> Int
 cantPokemonDeTipo_En _ [] = 0
-cantPokemonDeTipo_En t (p:ps) = unoSiCeroSiNo (esDeTipo t p) + cantPokemonDeTipo_En t ps 
+cantPokemonDeTipo_En t (p:ps) = unoSi (esDeTipo t p) + cantPokemonDeTipo_En t ps 
 
 losDeTipo :: TipoDePokemon -> [Pokemon] -> [Pokemon]
 -- Devuelve la lista resultante unicamente con los pokemon del tipo dado 
@@ -273,7 +273,7 @@ cantDevSeniorEn_QueTrabajenEn rs (p:ps) = cantDevSeniorEn_ConProyecto rs p + can
 
 cantDevSeniorEn_ConProyecto :: [Rol] -> Proyecto -> Int 
 cantDevSeniorEn_ConProyecto [] _ = 0
-cantDevSeniorEn_ConProyecto (r:rs) p = unoSiCeroSiNo (esDevSenior r && trabajaEn r p) + cantDevSeniorEn_ConProyecto rs p 
+cantDevSeniorEn_ConProyecto (r:rs) p = unoSi (esDevSenior r && trabajaEn r p) + cantDevSeniorEn_ConProyecto rs p 
 
 esDevSenior :: Rol -> Bool 
 esDevSenior r = esDeveloper r && esSenior (seniority r) 
@@ -320,7 +320,7 @@ cantQueTrabajaEn (p:ps) e = empleadosQueTrabajenEn p (roles e) + cantQueTrabajaE
 
 empleadosQueTrabajenEn :: Proyecto -> [Rol] -> Int 
 empleadosQueTrabajenEn _ []     = 0 
-empleadosQueTrabajenEn p (r:rs) = unoSiCeroSiNo (trabajaEn r p) + empleadosQueTrabajenEn p rs
+empleadosQueTrabajenEn p (r:rs) = unoSi (trabajaEn r p) + empleadosQueTrabajenEn p rs
 
 trabajaEn :: Rol -> Proyecto -> Bool
 trabajaEn r p = nombreProyecto (proyecto r) == nombreProyecto p 
