@@ -104,6 +104,7 @@ losPrimeros 0  _     = []
 losPrimeros n (x:xs) = x : losPrimeros (n-1) xs
 
 sinLosPrimeros :: Int -> [a] -> [a]
+--PRECONDICION: El numero dado no es negativo.
 sinLosPrimeros _ [] = [] 
 sinLosPrimeros 0 li  = li 
 sinLosPrimeros n (x:xs) = sinLosPrimeros (n-1) xs 
