@@ -155,7 +155,7 @@ lina   = ConsPokemon  Fuego 35
 polito = ConsPokemon  Agua 60
 pantro = ConsPokemon  Planta 10
 fox    = ConsPokemon  Fuego 20
-rodri  = ConsEntrenador "Lolito"  [pantro, polito]
+rodri  = ConsEntrenador "Lolito"  [polito]
 martu  = ConsEntrenador "Gorda" [lina, fox] 
 
 -- A 
@@ -192,9 +192,15 @@ tipo (ConsPokemon t _) = t
 -- C 
 
 cuantosDeTipo_LeGananATodosLosDe_ :: TipoDePokemon -> Entrenador -> Entrenador -> Int
-cuantosDeTipo_LeGananATodosLosDe_ t e1 e2 = if tieneDeTipo t e1 && losPokemonsDe_SonDerrotadosPor e2 t 
-                                            then cantPokemonDe t e1 
-                                            else 0  
+cuantosDeTipo_LeGananATodosLosDe_ t e1 e2 = cantidadDeTipo_En_QueGananA_ t (pokemonsDe e1) (pokemonsDe e2)  
+
+cantidadDeTipo_En_QueGananA_ :: TipoDePokemon -> [Pokemon] -> [Pokemon] -> Int 
+cantidadDeTipo_En_QueGananA_ t [] _ = 0
+cantidadDeTipo_En_QueGananA_ t (p:ps) ps2 =  unoSi(esDeTipo t p && leGanaATodos p ps2) + (cantidadDeTipo_En_QueGananA_ t ps ps2)
+
+leGanaATodos :: Pokemon -> [Pokemon] -> Bool 
+leGanaATodos p []       = True  
+leGanaATodos p (p1:ps1) = superaAPokemon p p1 && leGanaATodos p ps1  
 
 pokemonsDe :: Entrenador -> [Pokemon] 
 pokemonsDe (ConsEntrenador _ ps) = ps
