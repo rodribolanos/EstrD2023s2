@@ -98,6 +98,7 @@ repetir 0 _  = []
 repetir n x  = x : repetir (n-1) x
 
 losPrimeros :: Int -> [a] -> [a]
+--PRECONDICION: El numero dado no es negativo.
 losPrimeros _ []     = []
 losPrimeros 0  _     = []
 losPrimeros n (x:xs) = x : losPrimeros (n-1) xs
@@ -137,8 +138,7 @@ sumaDeEdades (x:xs) = edad x + sumaDeEdades xs
 elMasViejo :: [Persona] -> Persona
 --PRECONDICION: La lista posee al menos una persona 
 elMasViejo []     = error "La lista no tiene ninguna persona."
-elMasViejo (x:[]) = x 
-elMasViejo (x:xs) = if edad x > edad (elMasViejo xs)
+elMasViejo (x:xs) = if null xs || edad x > edad (elMasViejo xs)
                     then x 
                     else elMasViejo xs 
 
