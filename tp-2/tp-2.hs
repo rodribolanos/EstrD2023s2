@@ -73,11 +73,10 @@ maxDelPar (a, b) = if a > b
 
 elMinimo :: Ord a => [a] -> a
 -- PRECONDICION: La lista tiene al menos 1 elemento  
-elMinimo []     = error "La lista no tiene elementos" 
-elMinimo [a]    = a
-elMinimo (x:xs) = if x < elMinimo xs 
-                  then x 
-                  else elMinimo xs  
+elMinimo     []     = error "La lista no tiene elementos"
+elMinimo    (x:xs)  =   if null xs 
+                        then x 
+                        else min x (elMinimo xs)
 
 
 
