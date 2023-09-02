@@ -205,13 +205,6 @@ leGanaATodos p (p1:ps1) = superaAPokemon p p1 && leGanaATodos p ps1
 pokemonsDe :: Entrenador -> [Pokemon] 
 pokemonsDe (ConsEntrenador _ ps) = ps
 
-losPokemonsDe_SonDerrotadosPor :: Entrenador -> TipoDePokemon -> Bool
-losPokemonsDe_SonDerrotadosPor e t = laLista_EsDerrotadaPor (pokemonsDe e) t
-
-laLista_EsDerrotadaPor :: [Pokemon] -> TipoDePokemon -> Bool 
-laLista_EsDerrotadaPor [] _ = True 
-laLista_EsDerrotadaPor (x:xs) t = superaATipo t (tipo x) && laLista_EsDerrotadaPor xs t  
-
 superaAPokemon :: Pokemon -> Pokemon -> Bool 
 superaAPokemon (ConsPokemon  t1 _ )  (ConsPokemon t2 _)  = superaATipo t1 t2 
 
@@ -255,17 +248,17 @@ p4  = Management Senior edd
 
 unq = ConsEmpresa [programador1, p2, p3, p4] 
 proyectos :: Empresa -> [Proyecto]
-proyectos e1 = sinRepetidosProyectos (proyectosDeRoles (roles e1))
+proyectos e1 = proyectosSinRepetirDeRoles (roles e1)
 
 proyectosDeRoles :: [Rol] -> [Proyecto]
 proyectosDeRoles   []    = [] 
 proyectosDeRoles (x:xs) = proyecto x : proyectosDeRoles xs 
 
-sinRepetidosProyectos :: [Proyecto] -> [Proyecto]
-sinRepetidosProyectos [] = []
-sinRepetidosProyectos (x:xs) = if not (estaEnLaLista x xs) 
-                               then x : sinRepetidosProyectos xs 
-                               else sinRepetidosProyectos xs 
+proyectosSinRepetirDeRoles :: [Rol] -> [Proyecto]
+proyectosSinRepetirDeRoles [] = []
+proyectosSinRepetirDeRoles (x:xs) = if (estaEnLaLista (proyecto x) (proyectosSinRepetirDeRoles xs )) 
+                                    then proyectosSinRepetirDeRoles xs 
+                                    else (proyecto x) : proyectosSinRepetirDeRoles xs
 
 estaEnLaLista :: Proyecto -> [Proyecto] -> Bool 
 estaEnLaLista _ []       = False 
