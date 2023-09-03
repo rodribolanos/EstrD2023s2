@@ -167,6 +167,7 @@ toList EmptyT          = []
 toList (NodeT k t1 t2) = k : toList t2 ++ toList t1
 
 levelN :: Int -> Tree a -> [a]
+-- PRECONDICION: El nivel dado no es negativo
 levelN 0 (NodeT k t1 t2) = [k]
 levelN n EmptyT          = []
 levelN n (NodeT k t1 t2) = levelN (n-1) t1 ++ levelN (n-1) t2
