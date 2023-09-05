@@ -30,7 +30,8 @@ sacar color (Bolita c celda) = if (esDeColor color c)
                                then sacar color celda  
                                else (Bolita c (sacar color celda) ) 
 
-ponerN :: Int -> Color -> Celda -> Celda 
+ponerN :: Int -> Color -> Celda -> Celda
+--PRECONDICION: i >= 0 
 ponerN 0 color c = c 
 ponerN n color c = Bolita color (ponerN (n-1) color c)
 
@@ -63,7 +64,7 @@ pasosHastaTesoro (Cofre os c) = if (existeTesoro os)
 
 hayTesoroEn :: Int -> Camino -> Bool
 -- Indica true si hay un tesoro en la cantidad exacta de pasos
--- PRECONDICION = El numero dado no es negativo.  
+--PRECONDICION: i >= 0  
 hayTesoroEn 0 c            = hayUnTesoroAca c 
 hayTesoroEn n Fin          = False   
 hayTesoroEn n (Nada c)     = hayTesoroEn (n-1) c 
@@ -85,14 +86,16 @@ cantTesoros :: [Objeto] -> Int
 cantTesoros []     = 0 
 cantTesoros (o:os) = unoSi (esTesoro o) + cantTesoros os
 
-cantTesorosEntre :: Int -> Int -> Camino -> Int 
+cantTesorosEntre :: Int -> Int -> Camino -> Int
+--PRECONDICION: i >= 0. j >= i
 -- Dado un rango de pasos indica la cantidad de tesoros que hay en ese rango 
 cantTesorosEntre 0 m c            = cantTesorosEntrePasos m c 
 cantTesorosEntre n m Fin          = 0
 cantTesorosEntre n m (Nada c)     = cantTesorosEntre (n-1) (m-1) c 
 cantTesorosEntre n m (Cofre os c) = cantTesorosEntre (n-1) (m-1) c
 
-cantTesorosEntrePasos :: Int -> Camino -> Int 
+cantTesorosEntrePasos :: Int -> Camino -> Int
+--PRECONDICION: i >= 0 
 cantTesorosEntrePasos 0 c            = tesorosAca c 
 cantTesorosEntrePasos n Fin          = 0
 cantTesorosEntrePasos n (Nada c)     = cantTesorosEntrePasos (n-1) c
@@ -167,7 +170,7 @@ toList EmptyT          = []
 toList (NodeT k t1 t2) = k : toList t2 ++ toList t1
 
 levelN :: Int -> Tree a -> [a]
--- PRECONDICION: El nivel dado no es negativo
+--PRECONDICION: i >= 0
 levelN 0 (NodeT k t1 t2) = [k]
 levelN n EmptyT          = []
 levelN n (NodeT k t1 t2) = levelN (n-1) t1 ++ levelN (n-1) t2
