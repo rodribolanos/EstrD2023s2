@@ -99,14 +99,14 @@ repetir n x  = x : repetir (n-1) x
 
 losPrimeros :: Int -> [a] -> [a]
 --PRECONDICION: El numero dado no es negativo.
-losPrimeros _ []     = []
 losPrimeros 0  _     = []
+losPrimeros _ []     = []
 losPrimeros n (x:xs) = x : losPrimeros (n-1) xs
 
 sinLosPrimeros :: Int -> [a] -> [a]
 --PRECONDICION: El numero dado no es negativo.
-sinLosPrimeros _ [] = [] 
 sinLosPrimeros 0 li  = li 
+sinLosPrimeros _ []  = [] 
 sinLosPrimeros n (x:xs) = sinLosPrimeros (n-1) xs 
 
 -- REGISTROS 
