@@ -124,8 +124,106 @@ direccionADondeIr m = if (hayTesoro m)
                       else Der 
 
 caminoAlCualIr :: Mapa -> Mapa -> Mapa
+-- Dado un mapa te devuelve el camino completo por el que hay tesoro
 -- PRECONDICION: Existe unicamente un tesoro en el mapa   
 caminoAlCualIr mi md = if hayTesoro mi 
                        then mi 
                        else md
+
+caminoDeLaRamaMasLarga :: Mapa -> [Dir]
+-- En caso de dos caminos ser igual de largos, siempre se inclinara para caminar hacia la derecha.
+caminoDeLaRamaMasLarga (Fin c)               = []
+caminoDeLaRamaMasLarga (Bifurcacion c mi md) = direccionCMasProfundo mi md : caminoMasLargoEntre (caminoDeLaRamaMasLarga mi) (caminoDeLaRamaMasLarga md)
+
+direccionCMasProfundo :: Mapa -> Mapa -> Dir
+direccionCMasProfundo mi md = if (profundidad mi) > profundidad md 
+                              then Izq 
+                              else Der  
+
+profundidad :: Mapa -> Int 
+profundidad (Fin c)               = 0
+profundidad (Bifurcacion c mi md) = 1 + max (profundidad mi)  (profundidad md) 
+
+caminoMasLargoEntre :: [a] -> [a] -> [a]
+caminoMasLargoEntre a b = if longitud a > longitud b 
+                    then a 
+                    else b 
+
+longitud :: [a] -> Int 
+longitud []     = 0
+longitud (x:xs) = 1 + longitud xs
+
+tesorosPorNivel :: Mapa -> [[Objeto]]
+tesorosPorNivel (Fin c)               = [tesorosDe c] 
+tesorosPorNivel (Bifurcacion c mi md) = tesorosDe c : juntarPorNiveles (tesorosPorNivel mi) (tesorosPorNivel md) 
+
+juntarPorNiveles :: [[Objeto]] -> [[Objeto]] -> [[Objeto]]
+juntarPorNiveles []  yss           = yss
+juntarPorNiveles xss []            = xss 
+juntarPorNiveles (xs:xss) (ys:yss) = (xs ++ ys) : juntarPorNiveles xss yss 
+ 
+tesorosDe :: Cofre -> [Objeto]
+tesorosDe (Cofre obs) = tesorosEnObjetos obs 
+
+tesorosEnObjetos :: [Objeto] -> [Objeto] 
+tesorosEnObjetos []     = []
+tesorosEnObjetos (o:os) = if esTesoro o 
+                          then o : tesorosEnObjetos os 
+                          else tesorosEnObjetos os 
+
+todosLosCaminos :: Mapa -> [[Dir]]
+todosLosCaminos (Fin c)               = []
+todosLosCaminos (Bifurcacion c mi md) = [Izq] : (agregarIzq (todosLosCaminos mi)) ++ [Der] :(agregarDer (todosLosCaminos md)) 
+
+agregarIzq :: [[Dir]] -> [[Dir]]
+-- Agrega la direccion izquierda a todos los caminos 
+agregarIzq []       = []  
+agregarIzq (ds:dss) = (Izq : ds) : agregarIzq dss
+
+agregarDer :: [[Dir]] -> [[Dir]]
+-- Agrega lsa direccion izquierda a todos los caminos 
+agregarDer []       = []  
+agregarDer (ds:dss) = (Der : ds) : agregarDer dss
+
+data Componente = Lanzatorpedos | Motor Int | Almacen [Barril]
+    deriving Show
+data Barril     = Comida | Torpedo | Oxigeno | Combustible 
+    deriving Show
+data Sector     = S SectorId [Componente] [Tripulante] 
+    deriving Show
+type SectorId   = String 
+type Tripulante = String
+
+data Tree a = EmptyT | NodeT a (Tree a) (Tree a)
+    deriving Show 
+data Nave = N (Tree Sector)
+    deriving Show
+naveEjemplo = N sectorEjemplo 
+
+sector1 = S "sector1" [Lanzatorpedos, (Motor 4)] ["Thiago"]
+sector2 = S "sector2" [(Almacen ([Comida, Torpedo, Oxigeno]))] ["Lean"]
+sector3 = S "sector3" [Lanzatorpedos, (Almacen ([Comida, Torpedo, Oxigeno]))] ["Rodri"] 
+sector4 = S "sector4" [(Motor 2)] ["Nacho"]
+
+sectorEjemplo :: Tree Sector 
+sectorEjemplo =  NodeT sector1 
+                        (NodeT sector2 
+                                (NodeT sector4 
+                                    EmptyT 
+                                    EmptyT)
+                                EmptyT)
+                        (NodeT sector3
+                            EmptyT
+                            EmptyT) 
+
+sectores :: Nave -> [SectorId] 
+-- Devuelve todos los sectores de la nave 
+sectores (N s) = sectoresEn s
+
+sectoresEn :: Tree Sector -> [SectorId]
+sectoresEn EmptyT               = []
+sectoresEn (NodeT sector si sd) = sectorId sector : (sectoresEn si) ++ (sectoresEn sd)
+
+sectorId :: Sector -> SectorId
+sectorId (S si _ _) = si
 
