@@ -311,11 +311,12 @@ agregarComponentesEn cs sid (S sectorId cos ts) = if sid == sectorId
 
 
 -- EJERCICIO 3.4 --------------------
-{-asignarTripulanteA :: Tripulante -> [SectorId] -> Nave -> Nave 
+asignarTripulanteA :: Tripulante -> [SectorId] -> Nave -> Nave 
 -- Incorpora un tripulante a una lista de sectores de la nave 
 -- PRECONDICION: Existen todos los sectores de la nave 
 asignarTripulanteA t sis (N s) = N (asignarTripulanteACada t sis s)
- Solucion sin cumplir precondicion 
+
+-- Solucion sin cumplir precondicion 
 asignarTripulanteACada :: Tripulante -> [SectorId] -> Tree Sector -> Tree Sector
 asignarTripulanteACada t sis EmptyT               = EmptyT 
 asignarTripulanteACada t sis (NodeT sector si sd) = NodeT (agregarTripulanteSiPertenece t sis sector)  (asignarTripulanteACada t sis si) (asignarTripulanteACada t sis sd) 
@@ -326,24 +327,9 @@ agregarTripulanteSiPertenece t (s:ss) (S sid cs ts) = if s == sid
                                                       then (S sid cs (agregarTripulante t ts))
                                                       else agregarTripulanteSiPertenece t ss (S sid cs ts)
 
-
--- Solucion con precondicion. Con recursion sobre la lista de sectorId // SIGUE SIN FUNCIONAR PARA PRECONDICION. AHORA TIRA ERROR SIEMPRE  
-asignarTripulanteACada :: Tripulante -> [SectorId] -> Tree Sector -> Tree Sector
-asignarTripulanteACada t []     ts = ts 
-asignarTripulanteACada t (s:ss) ts = asignarTripulanteASector t s ts                          
-
- asignarTripulanteASector :: Tripulante -> SectorId -> Tree Sector -> Tree Sector
-asignarTripulanteASector t sid EmptyT               = error"El sector no pertenece a esta nave"
-asignarTripulanteASector t sid (NodeT sector si sd) = NodeT (agregarTripulanteSiEs t sid sector) (asignarTripulanteASector t sid si) (asignarTripulanteASector t sid sd)
-    
-agregarTripulanteSiEs :: Tripulante -> SectorId -> Sector -> Sector 
-agregarTripulanteSiEs t sid (S id cs ts)  = if sid == id  
-                                            then (S id cs (agregarTripulante t ts))
-                                            else (S id cs ts)
-                             
 agregarTripulante :: Tripulante -> [Tripulante] -> [Tripulante] 
 agregarTripulante t ts = t : ts
- -}
+
 -- EJERCICIO 3.6 --------------------------------------
 sectoresAsignados :: Tripulante -> Nave -> [SectorId]
 sectoresAsignados t (N ts) = sectoresAsignadosPara t ts 
@@ -367,10 +353,24 @@ apareceElTripulante :: Tripulante -> [Tripulante] -> Bool
 apareceElTripulante t []         = False 
 apareceElTripulante t (tri:tris) = t == tri || apareceElTripulante t tris 
 
+-- 
 tripulantes :: Nave -> [Tripulante]
 -- Devuelve la lista de tripulantes de la nave sin repetidos 
-tripulantes (N ts) = tripulantesEn ts 
+tripulantes (N ts) = sinRepetidosTripulantes (tripulantesEn ts) 
 
 tripulantesEn :: Tree Sector -> [Tripulante]
 tripulantesEn EmptyT                 = []
-tripulantesEn (NodeT sector si sd)   = tripulantesQueNoAparecen sector (tripulantesEn si ++ tripulantesEn sd) ++ tripulantesEn si ++ tripulantesEn sd 
+tripulantesEn (NodeT sector si sd)   = (tripulantesDe sector)  ++ tripulantesEn si ++ tripulantesEn sd
+
+sinRepetidosTripulantes :: [Tripulante] -> [Tripulante]
+sinRepetidosTripulantes []     = []
+sinRepetidosTripulantes (t:ts) = if pertenece t ts 
+                                 then  sinRepetidosTripulantes ts 
+                                 else t : sinRepetidosTripulantes ts 
+
+tripulantesDe :: Sector -> [Tripulante] 
+tripulantesDe (S sid cs ts) = ts
+
+pertenece :: Eq a => a -> [a] -> Bool 
+pertenece _ []     = False 
+pertenece e (x:xs) = (e == x) || pertenece e xs
