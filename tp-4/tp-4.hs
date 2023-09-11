@@ -374,3 +374,68 @@ tripulantesDe (S sid cs ts) = ts
 pertenece :: Eq a => a -> [a] -> Bool 
 pertenece _ []     = False 
 pertenece e (x:xs) = (e == x) || pertenece e xs
+
+
+-- EJERCICIO LOBOS -------------------------------------------------------
+
+type Presa = String 
+type Territorio = String 
+type Nombre = String 
+
+data Lobo   = Cria       Nombre 
+            | Explorador Nombre [Territorio] Lobo Lobo 
+            | Cazador    Nombre [Presa]      Lobo Lobo Lobo
+
+data Manada = M Lobo 
+loboPantro  = Cria "Pantro"
+loboPolo    = Cria "Polito" 
+loboLina    = Cria "Linita"
+loboFox     = Cria "Fox"
+loboCazador = Cazador "Cazador" ["Vaca", "Zorrino", "Caballo", "Cocodrilo", "Pato", "Serpiente"] loboLina loboFox loboPantro 
+loboExplorador1 = Explorador "Explorador1" ["Rio", "Bosque", "Misiones"] loboPolo loboPantro
+
+manadaDeLobos = M (Explorador "Explorador2" ["unqui", "Rio de Quilmes"] loboCazador loboExplorador1)
+{- Otra manera de escribirlo  
+    manadaDeLobos = Explorador "Explorador2" ["unqui", "Rio de Quilmes"] (Cazador "Cazador" ["Vaca", "Zorrino", "Caballo"] (Cria "Pantro") (Cria "Lina") (Cria "Fox")) 
+                                                                         (Explorador "Explorador1" ["Rio", "Bosque", "Misiones"] (Cria "Polo") (Cria "Pantro"))  -}
+
+buenaCaza :: Manada -> Bool 
+buenaCaza (M l) = cantidadDeAlimento l > cantidadDeCrias l 
+
+cantidadDeCrias :: Lobo -> Int 
+cantidadDeCrias (Cria n)               = 1
+cantidadDeCrias (Explorador _ _ l1 l2) = cantidadDeCrias l1 + cantidadDeCrias l2
+cantidadDeCrias (Cazador _ _ l1 l2 l3) = cantidadDeCrias l1 + cantidadDeCrias l2 + cantidadDeCrias l3
+
+cantidadDeAlimento :: Lobo -> Int
+cantidadDeAlimento (Cria n)                = 0
+cantidadDeAlimento (Explorador n ts l1 l2) = cantidadDeAlimento l1 + cantidadDeAlimento l2  
+cantidadDeAlimento (Cazador n ps l1 l2 l3) = longitud ps + cantidadDeAlimento l1 + cantidadDeAlimento l2 + cantidadDeAlimento l3
+
+-- EJERCICIO 4.2 
+elAlfa :: Manada -> (Nombre, Int)
+elAlfa (M l) = elAlfaLobo l 
+
+elAlfaLobo :: Lobo -> (Nombre, Int) 
+elAlfaLobo (Cria n)                = (n,0)
+elAlfaLobo (Explorador n ts l1 l2) = elDeMasPresas (elAlfaLobo l1) (elAlfaLobo l2)
+elAlfaLobo (Cazador n ps l1 l2 l3) = elDeMasPresas (n, longitud ps) (elDeMasPresas (elAlfaLobo l1) 
+                                     (elDeMasPresas (elAlfaLobo l2) (elAlfaLobo l3)) )
+
+elDeMasPresas :: (Nombre, Int) -> (Nombre, Int) -> (Nombre, Int)
+elDeMasPresas (n1,i1) (n2,i2) = if i1 > i2 
+                                then (n1,i1)
+                                else (n2,i2)
+
+losQueExploraron :: Territorio -> Manada -> [Nombre]
+losQueExploraron t (M l) = losQueExploraronLobo t l 
+
+losQueExploraronLobo :: Territorio -> Lobo -> [Nombre]
+losQueExploraronLobo t (Cria n)                = []
+losQueExploraronLobo t (Explorador n ts l1 l2) = if exploroTerritorio t ts  
+                                                 then n : (losQueExploraronLobo t l1) ++ losQueExploraronLobo t l2
+                                                 else losQueExploraronLobo t l1 ++ losQueExploraronLobo t l2
+losQueExploraronLobo t (Cazador n ps l1 l2 l3) = losQueExploraronLobo t l1 ++ losQueExploraronLobo t l2 ++ losQueExploraronLobo t l3 
+
+exploroTerritorio :: Territorio -> [Territorio] -> Bool 
+exploroTerritorio t ts = pertenece t ts 
