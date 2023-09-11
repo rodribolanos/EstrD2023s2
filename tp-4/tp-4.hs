@@ -74,6 +74,7 @@ mapaEj = Bifurcacion (Cofre [Chatarra])
                         (Bifurcacion (Cofre [])
                             (Bifurcacion (Cofre [Chatarra]) (Fin (Cofre [])) (Fin (Cofre [])))
                             (Fin (Cofre [])))
+-- EJERCICIO 2A --------------------------------------------------------------
 hayTesoro :: Mapa -> Bool 
 -- Dado un mapa, devuelve si hay un tesoro en alguna parte del mapa
 hayTesoro (Fin c)               = hayTesoroAca c 
@@ -91,6 +92,7 @@ esTesoro :: Objeto -> Bool
 esTesoro Tesoro = True 
 esTesoro _      = False
 
+-- EJERCICIO 2B --------------------------------------------------------------
 hayTesoroEn :: [Dir] -> Mapa -> Bool 
 -- Dada una lista de direcciones indica si al final de la lista hay un tesoro. Recursion sobre la lista y el mapa
 -- PRECONDICION: La lista de direcciones es un camino viable para el mapa.   
@@ -109,6 +111,7 @@ esDer :: Dir -> Bool
 esDer Der = True 
 esDer _   = False
 
+-- EJERCICIO 2C --------------------------------------------------------------
 caminoAlTesoro :: Mapa -> [Dir]
 -- PRECONDICION: Existe unicamente un tesoro en el mapa 
 caminoAlTesoro (Fin c)               = []
@@ -130,6 +133,7 @@ caminoAlCualIr mi md = if hayTesoro mi
                        then mi 
                        else md
 
+-- EJERCICIO 2D --------------------------------------------------------------
 caminoDeLaRamaMasLarga :: Mapa -> [Dir]
 -- En caso de dos caminos ser igual de largos, siempre se inclinara para caminar hacia la derecha.
 caminoDeLaRamaMasLarga (Fin c)               = []
@@ -153,6 +157,7 @@ longitud :: [a] -> Int
 longitud []     = 0
 longitud (x:xs) = 1 + longitud xs
 
+-- EJERCICIO 2E --------------------------------------------------------------
 tesorosPorNivel :: Mapa -> [[Objeto]]
 tesorosPorNivel (Fin c)               = [tesorosDe c] 
 tesorosPorNivel (Bifurcacion c mi md) = tesorosDe c : juntarPorNiveles (tesorosPorNivel mi) (tesorosPorNivel md) 
@@ -171,6 +176,7 @@ tesorosEnObjetos (o:os) = if esTesoro o
                           then o : tesorosEnObjetos os 
                           else tesorosEnObjetos os 
 
+-- EJERCICIO 2F --------------------------------------------------------------
 todosLosCaminos :: Mapa -> [[Dir]]
 todosLosCaminos (Fin c)               = []
 todosLosCaminos (Bifurcacion c mi md) = [Izq] : (agregarIzq (todosLosCaminos mi)) ++ [Der] :(agregarDer (todosLosCaminos md)) 
