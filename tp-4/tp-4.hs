@@ -251,20 +251,11 @@ propulsionEnSector (S _ cs _) = propulsionEnMotoresEn cs
 
 propulsionEnMotoresEn :: [Componente] -> Int 
 propulsionEnMotoresEn []     = 0
-propulsionEnMotoresEn (c:cs) = propulsionEn c + propulsionEnMotoresEn cs
+propulsionEnMotoresEn (c:cs) = propulsionEnComponente c + propulsionEnMotoresEn cs
 
-propulsionEn :: Componente -> Int 
-propulsionEn c = if esMotor c 
-                 then propulsionEnMotor c
-                 else 0
-
-esMotor :: Componente -> Bool 
-esMotor (Motor i) = True 
-esMotor _         = False 
-
-propulsionEnMotor :: Componente -> Int 
--- Precondicion: El componente dado es un motor 
-propulsionEnMotor (Motor i) = i
+propulsionEnComponente :: Componente -> Int  
+propulsionEnComponente (Motor i) = i
+propulsionEnComponente _         = 0
 
 
 -- EJERCICIO 3.3 -------------
@@ -310,25 +301,25 @@ agregarComponentesEn cs sid (S sectorId cos ts) = if sid == sectorId
                                                 else (S sectorId cos ts)
 
 
--- EJERCICIO 3.4 --------------------
+-- EJERCICIO 3.5 --------------------
 asignarTripulanteA :: Tripulante -> [SectorId] -> Nave -> Nave 
 -- Incorpora un tripulante a una lista de sectores de la nave 
 -- PRECONDICION: Existen todos los sectores de la nave 
 asignarTripulanteA t sis (N s) = N (asignarTripulanteACada t sis s)
 
--- Solucion sin cumplir precondicion 
-asignarTripulanteACada :: Tripulante -> [SectorId] -> Tree Sector -> Tree Sector
-asignarTripulanteACada t sis EmptyT               = EmptyT 
-asignarTripulanteACada t sis (NodeT sector si sd) = NodeT (agregarTripulanteSiPertenece t sis sector)  (asignarTripulanteACada t sis si) (asignarTripulanteACada t sis sd) 
-
-agregarTripulanteSiPertenece :: Tripulante -> [SectorId] -> Sector -> Sector 
-agregarTripulanteSiPertenece t [] sector            = sector  
-agregarTripulanteSiPertenece t (s:ss) (S sid cs ts) = if s == sid 
-                                                      then (S sid cs (agregarTripulante t ts))
-                                                      else agregarTripulanteSiPertenece t ss (S sid cs ts)
-
 agregarTripulante :: Tripulante -> [Tripulante] -> [Tripulante] 
 agregarTripulante t ts = t : ts
+
+--Otra solucion: Con recursion sobre la lista de sectores
+asignarTripulanteACada :: Tripulante -> [SectorId] -> Tree Sector -> Tree Sector 
+asignarTripulanteACada t []     ts                    = ts 
+asignarTripulanteACada  t (s:ss) EmptyT               = error"La lista de sectores contenia un sector no perteneciente a esta nave"
+asignarTripulanteACada t (s:ss) (NodeT sector si sd)  = NodeT (agregarTripulanteSiPertence t s sector) (asignarTripulanteACada t ss si) (asignarTripulanteACada t ss sd)  
+
+agregarTripulanteSiPertence :: Tripulante -> SectorId -> Sector -> Sector 
+agregarTripulanteSiPertence t sectorid (S sid cs ts) = if sectorid == sid 
+                                                 then (S sid cs (agregarTripulante t ts))
+                                                 else (S sid cs ts)
 
 -- EJERCICIO 3.6 --------------------------------------
 sectoresAsignados :: Tripulante -> Nave -> [SectorId]
@@ -353,7 +344,6 @@ apareceElTripulante :: Tripulante -> [Tripulante] -> Bool
 apareceElTripulante t []         = False 
 apareceElTripulante t (tri:tris) = t == tri || apareceElTripulante t tris 
 
--- 
 tripulantes :: Nave -> [Tripulante]
 -- Devuelve la lista de tripulantes de la nave sin repetidos 
 tripulantes (N ts) = sinRepetidosTripulantes (tripulantesEn ts) 
@@ -398,7 +388,7 @@ manadaDeLobos = M (Explorador "Explorador2" ["unqui", "Rio de Quilmes"] loboCaza
 {- Otra manera de escribirlo  
     manadaDeLobos = Explorador "Explorador2" ["unqui", "Rio de Quilmes"] (Cazador "Cazador" ["Vaca", "Zorrino", "Caballo"] (Cria "Pantro") (Cria "Lina") (Cria "Fox")) 
                                                                          (Explorador "Explorador1" ["Rio", "Bosque", "Misiones"] (Cria "Polo") (Cria "Pantro"))  -}
-
+-- EJERCICIO 4.2------------------------
 buenaCaza :: Manada -> Bool 
 buenaCaza (M l) = cantidadDeAlimento l > cantidadDeCrias l 
 
@@ -412,7 +402,7 @@ cantidadDeAlimento (Cria n)                = 0
 cantidadDeAlimento (Explorador n ts l1 l2) = cantidadDeAlimento l1 + cantidadDeAlimento l2  
 cantidadDeAlimento (Cazador n ps l1 l2 l3) = longitud ps + cantidadDeAlimento l1 + cantidadDeAlimento l2 + cantidadDeAlimento l3
 
--- EJERCICIO 4.2 
+-- EJERCICIO 4.3------------------------
 elAlfa :: Manada -> (Nombre, Int)
 elAlfa (M l) = elAlfaLobo l 
 
@@ -426,7 +416,7 @@ elDeMasPresas :: (Nombre, Int) -> (Nombre, Int) -> (Nombre, Int)
 elDeMasPresas (n1,i1) (n2,i2) = if i1 > i2 
                                 then (n1,i1)
                                 else (n2,i2)
-
+-- EJERCICIO 4.4------------------------
 losQueExploraron :: Territorio -> Manada -> [Nombre]
 losQueExploraron t (M l) = losQueExploraronLobo t l 
 
@@ -439,3 +429,65 @@ losQueExploraronLobo t (Cazador n ps l1 l2 l3) = losQueExploraronLobo t l1 ++ lo
 
 exploroTerritorio :: Territorio -> [Territorio] -> Bool 
 exploroTerritorio t ts = pertenece t ts 
+
+-- EJERCICIO 4.5 ----------------------------------
+exploradoresPorTerritorio :: Manada -> [(Territorio, [Nombre])]
+exploradoresPorTerritorio (M tl) = exploradoresPorTerritorioLobos tl 
+
+exploradoresPorTerritorioLobos :: Lobo -> [(Territorio, [Nombre])]
+exploradoresPorTerritorioLobos (Cria n)                = []
+exploradoresPorTerritorioLobos (Explorador n ts l1 l2) = (exploradorYTerritorios n ts (juntarTerritorios (exploradoresPorTerritorioLobos l1) ++ (exploradoresPorTerritorioLobos l2))) 
+exploradoresPorTerritorioLobos (Cazador n ps l1 l2 l3) = (exploradoresPorTerritorioLobos l1) ++ (exploradoresPorTerritorioLobos l2) ++ (exploradoresPorTerritorioLobos l3)
+
+exploradorYTerritorioTupla :: Nombre -> Territorio -> [(Territorio, [Nombre])] -> (Territorio, [Nombre])
+-- RECURSION SOBRE LA LISTA DE TUPLAS VERIFICANDO SI EL TERRITORIO DADO FORMA PARTE 
+exploradorYTerritorioTupla n t     []          =  (t, [n])  
+exploradorYTerritorioTupla n t ((t1,ns1): tsns) = if t == t1 
+                                                  then (t1, agregarNombre n ns1)           
+                                                  else exploradorYTerritorioTupla n t tsns 
+
+exploradorYTerritorios ::  Nombre -> [Territorio] -> [(Territorio, [Nombre])] -> [(Territorio, [Nombre])]
+-- RECURSION SOBRE LA LISTA DE TERRITORIOS 
+exploradorYTerritorios n [] tsns     = [] 
+exploradorYTerritorios n (t:ts) tsns = exploradorYTerritorioTupla n t tsns : exploradorYTerritorios n ts tsns
+
+juntarTerritorios :: [(Territorio, [Nombre])] -> [(Territorio, [Nombre])]
+-- RECURSION SOBRE LA LISTA DE TUPLAS, PARA PODER JUNTAR TERRITORIOS EN CASO DE QUE SE REPITAN 
+juntarTerritorios []        = []
+juntarTerritorios (tn:tns)  = juntarTerritoriosTupla tn tns ++ juntarTerritorios tns   
+
+juntarTerritoriosTupla :: (Territorio, [Nombre]) -> [(Territorio, [Nombre])] -> [(Territorio, [Nombre])] 
+-- RECURSION SOBRE LA LISTA DE TUPLAS
+juntarTerritoriosTupla tn []          = [tn]
+juntarTerritoriosTupla tn (tns:tnss)  = if fst tn == fst tns   -- ESTO INDICA QUE LOS TERRITORIOS SON IGUALES, YA QUE PIDE EL PRIMERO DE CADA TUPLA 
+                                        then  ((fst tns), (snd tn ++ snd tns)) : tnss 
+                                        else tns : juntarTerritoriosTupla tn tnss
+
+agregarNombre :: Nombre -> [Nombre] -> [Nombre]
+agregarNombre n ns = n : ns 
+
+-- EJERCICIO 4.6 -------------------    
+superioresDelCazador :: Nombre -> Manada -> [Nombre] 
+-- dado un nombre de cazador y una manada, indica el nombre de todos los cazadores que tienen como subordinado al cazador dado (directa o indirectamente).
+-- PRECONDICION: Existe un unico cazador con el nombre dado
+superioresDelCazador n (M l) = superioresDelCazadorEnLobo n l 
+
+superioresDelCazadorEnLobo :: Nombre -> Lobo -> [Nombre]
+-- PRECONDICION: Existe un unico cazador con el nombre dado 
+superioresDelCazadorEnLobo n (Cria n1)                =  error"No esta el lobo"
+superioresDelCazadorEnLobo n (Explorador n1 ts l1 l2) =  n1 : (superioresDelCazadorEnLobo n (caminoPorDebajoDelLobo n l1 l2))                                                       
+superioresDelCazadorEnLobo n (Cazador n1 ps l1 l2 l3) =  if n == n1 
+                                                         then [] 
+                                                         else n1 : (superioresDelCazadorEnLobo n (caminoPorDebajoDelLobo n l1 (caminoPorDebajoDelLobo n l2 l3)))
+                                                         
+                                                         
+
+caminoPorDebajoDelLobo :: Nombre -> Lobo -> Lobo -> Lobo 
+caminoPorDebajoDelLobo n l1 l2 = if elLoboSeEncuentraEn n l1 
+                                 then l1 
+                                 else l2
+
+elLoboSeEncuentraEn :: Nombre -> Lobo -> Bool 
+elLoboSeEncuentraEn n1 (Cria n)                     = n1 == n
+elLoboSeEncuentraEn n1 (Explorador n ts l1 l2) = n1 == n || elLoboSeEncuentraEn n1 l1 || elLoboSeEncuentraEn n1 l2 
+elLoboSeEncuentraEn n1 (Cazador n ps l1 l2 l3) = n1 == n || elLoboSeEncuentraEn n1 l1 || elLoboSeEncuentraEn n1 l2 || elLoboSeEncuentraEn n1 l3
