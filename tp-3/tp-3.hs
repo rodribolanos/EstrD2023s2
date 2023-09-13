@@ -144,11 +144,11 @@ perteneceT m (NodeT k t1 t2) = m == k || perteneceT m t1 || perteneceT m t2
 
 aparacionesT :: Eq a => a -> Tree a -> Int 
 aparacionesT _ EmptyT          = 0
-aparicionesT k (NodeT m t1 t2) = unoSi(k==m) + (aparacionesT m t1) + (aparicionesT m t2) 
+aparicionesT k (NodeT m t1 t2) = unoSi(k==m) + aparacionesT m t1 + aparicionesT m t2 
 
 leaves :: Tree a -> [a]
 leaves EmptyT                  = []
-leaves (NodeT m t1 t2)         = if (esEmptyT t1 && esEmptyT t2) 
+leaves (NodeT m t1 t2)         = if esEmptyT t1 && esEmptyT t2 
                                  then [m]
                                  else leaves t1 ++ leaves t2
 esEmptyT :: Tree a -> Bool 
@@ -178,7 +178,7 @@ levelN n (NodeT k t1 t2) = levelN (n-1) t1 ++ levelN (n-1) t2
 listPerLevel :: Tree a -> [[a]]
 -- Dado un arbol devuelve una lista de listas en la que cada elementeo rep un nivel del arbol
 listPerLevel EmptyT          = []
-listPerLevel (NodeT k t1 t2) = [k] : (listaPorNiveles (listPerLevel t1) (listPerLevel t2))      
+listPerLevel (NodeT k t1 t2) = [k] : listaPorNiveles (listPerLevel t1) (listPerLevel t2)      
 
 listaPorNiveles :: [[a]] -> [[a]] -> [[a]]
 listaPorNiveles [] xss = xss 
@@ -222,9 +222,9 @@ ejemploC = Neg (Prod (Sum (Valor 25) (Valor 10)) (Valor 2))
 
 eval :: ExpA -> Int 
 eval (Valor n)    = n 
-eval (Sum e1 e2)  = (eval e1) + (eval e2)
-eval (Prod e1 e2) = (eval e1) * (eval e2)
-eval (Neg e1)     = (-(eval e1) )
+eval (Sum e1 e2)  = eval e1 + eval e2
+eval (Prod e1 e2) = eval e1 * eval e2
+eval (Neg e1)     = -(eval e1) 
 
 
  
