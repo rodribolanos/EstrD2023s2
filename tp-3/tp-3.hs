@@ -75,7 +75,12 @@ hayUnTesoroAca (Cofre os _) = existeTesoro os
 hayUnTesoroAca _            = False
 
 hayAlMenosNTesoros :: Int -> Camino -> Bool 
-hayAlMenosNTesoros n c = n <= tesorosEn c
+hayAlMenosNTesoros 0 c            = True 
+hayAlMenosNTesoros n (Fin)        = False 
+hayAlMenosNTesoros n (Nada c)     = hayAlMenosNTesoros n c 
+hayAlMenosNTesoros n (Cofre os c) = if n >= cantTesoros os  
+                                    then hayAlMenosNTesoros (n - cantTesoros os) c
+                                    else hayAlMenosNTesoros 0 c     
 
 tesorosEn :: Camino -> Int 
 tesorosEn Fin          = 0
