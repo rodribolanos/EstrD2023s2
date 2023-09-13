@@ -246,11 +246,11 @@ simplificarSuma e1        e2        = Sum e1 e2
  
 simplificarProd :: ExpA -> ExpA -> ExpA
 simplificarProd (Valor 0) e2        = Valor 0 
-simplificarProd e1        (Valor 0) = Valor 0 
+simplificarProd e1        (Valor 0) = Valor 0
+simplificarProd (Valor 1) e2        = e2 
+simplificarProd e1        (Valor 1) = e1 
 simplificarProd e1        e2        = Prod e1 e2
 
 simplificarNeg :: ExpA -> ExpA 
-simplificarNeg e1 = if (eval e1) < 0
-                          then Valor (-(eval e1))
-                          else (Neg (simplificar e1))
-
+simplificarNeg (Neg (Neg e1)) = e1  
+simplificarNeg e1             = e1 
