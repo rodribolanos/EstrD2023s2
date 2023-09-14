@@ -475,7 +475,7 @@ superioresDelCazador n (M l) = superioresDelCazadorEnLobo n l
 superioresDelCazadorEnLobo :: Nombre -> Lobo -> [Nombre]
 -- PRECONDICION: Existe un unico cazador con el nombre dado 
 superioresDelCazadorEnLobo n (Cria n1)                =  error"No esta el lobo"
-superioresDelCazadorEnLobo n (Explorador n1 ts l1 l2) =  n1 : (superioresDelCazadorEnLobo n (caminoPorDebajoDelLobo n l1 l2))                                                       
+superioresDelCazadorEnLobo n (Explorador n1 ts l1 l2) = (superioresDelCazadorEnLobo n (caminoPorDebajoDelLobo n l1 l2))                                                       
 superioresDelCazadorEnLobo n (Cazador n1 ps l1 l2 l3) =  if n == n1 
                                                          then [] 
                                                          else n1 : (superioresDelCazadorEnLobo n (caminoPorDebajoDelLobo n l1 (caminoPorDebajoDelLobo n l2 l3)))
