@@ -257,5 +257,5 @@ simplificarProd e1        (Valor 1) = e1
 simplificarProd e1        e2        = Prod e1 e2
 
 simplificarNeg :: ExpA -> ExpA 
-simplificarNeg (Neg e1)) = e1  
+simplificarNeg (Neg e1) = e1  
 simplificarNeg e1        = (Neg e1)  

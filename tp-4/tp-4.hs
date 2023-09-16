@@ -69,7 +69,7 @@ data Mapa = Fin Cofre | Bifurcacion Cofre Mapa Mapa
 
 mapaEj = Bifurcacion (Cofre [Chatarra]) 
                         (Bifurcacion (Cofre [Chatarra])
-                            (Bifurcacion (Cofre [Tesoro]) (Fin (Cofre [])) (Fin (Cofre [])))
+                            (Bifurcacion (Cofre [Tesoro]) (Bifurcacion (Cofre []) (Fin (Cofre [])) (Fin (Cofre []))) (Fin (Cofre [])))
                             (Fin (Cofre [])))
                         (Bifurcacion (Cofre [])
                             (Bifurcacion (Cofre [Chatarra]) (Fin (Cofre [])) (Fin (Cofre [])))
@@ -138,8 +138,13 @@ caminoAlCualIr mi md = if hayTesoro mi
 
 caminoDeLaRamaMasLarga :: Mapa -> [Dir]
 -- En caso de dos caminos ser igual de largos, siempre se inclinara para caminar hacia la derecha.
-caminoDeLaRamaMasLarga (Fin c)               = []
-caminoDeLaRamaMasLarga (Bifurcacion c mi md) = direccionCMasProfundo mi md : caminoMasLargoEntre (caminoDeLaRamaMasLarga mi) (caminoDeLaRamaMasLarga md)
+caminoDeLaRamaMasLarga m = fst (caminoDeLaRamaMasLargaT m)
+
+caminoDeLaRamaMasLargaT :: Mapa -> ([Dir], Int) 
+caminoDeLaRamaMasLargaT (Fin c)               = ([], 0)
+caminoDeLaRamaMasLargaT (Bifurcacion c mi md) = if snd (caminoDeLaRamaMasLargaT mi) > snd (caminoDeLaRamaMasLargaT md)
+                                               then ((Izq : fst (caminoDeLaRamaMasLargaT mi)), 1 + snd(caminoDeLaRamaMasLargaT mi))
+                                               else ((Der : fst (caminoDeLaRamaMasLargaT md)), 1 + snd(caminoDeLaRamaMasLargaT md))  
 
 direccionCMasProfundo :: Mapa -> Mapa -> Dir
 direccionCMasProfundo mi md = if (profundidad mi) > profundidad md 
