@@ -88,7 +88,7 @@ factorial 0 = 1
 factorial n = n * factorial (n-1) 
 
 cuentaRegresiva :: Int -> [Int] 
-cuentaRegresiva 1 = [1]
+cuentaRegresiva 0 = [0]
 cuentaRegresiva n = if n < 1 
                     then [] 
                     else n : cuentaRegresiva (n-1)
