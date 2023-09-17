@@ -81,7 +81,9 @@ ordenar :: Ord a => [a] -> [a]
 ordenar [] = []
 orderar xs =    let m = minimo xs
                 in m : ordenar (sacar m xs)
--- COSTO CUADRATICO. Por cada elemento de la lista xs, lo almacena en m y aplica una funcion de costo lineal sobre el resto. 
+-- COSTO CUADRATICO. Por cada elemento de la lista xs, lo almacena en m y aplica una funcion de costo lineal sobre el resto.
+
+
 
 
 
