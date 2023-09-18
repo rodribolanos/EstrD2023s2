@@ -1,5 +1,5 @@
-module Set 
-(nuevoS, addS, belongs, sizeS, removeS, unionS, setToList)
+module SetV1
+(Set, emptyS, addS, belongs, sizeS, removeS, unionS, setToList)
 where
 
 
@@ -8,8 +8,8 @@ data Set a = S [a]          Int
 {- Siendo Set a = S [a] n
 INV. REP.: n tiene siempre el mismo valor que elementos de la lista.
            En caso de la lista ser vacia, n = 0                                       -}
-nuevoS :: Set a
-nuevoS = S [] 0
+emptyS :: Set a
+emptyS = S [] 0
 -- COSTO CONSTANTE
 
 addS :: Eq a => a -> Set a -> Set a
@@ -42,6 +42,7 @@ removeS x (S ys n) = (S (listaSin x ys) (n-1))
 
 unionS :: Eq a => Set a -> Set a -> Set a
 unionS (S xs n1) (S ys n2) = (S (listasSinRepetir xs ys) (length (listasSinRepetir xs ys)))
+-- COSTO CUADRATICO 
 
 listasSinRepetir :: Eq a => [a] -> [a] -> [a] 
 listasSinRepetir []     ys   = ys 
