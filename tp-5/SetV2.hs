@@ -1,8 +1,7 @@
 module SetV2
 (Set, emptyS, addS, belongs, sizeS, removeS, unionS, setToList)
 where
-
-
+    
 data Set a = S [a]          
 
 emptyS :: Set a 
@@ -22,20 +21,21 @@ removeS :: Eq a => a -> Set a -> Set a
 removeS x (S ys) = S (listaSin x ys)
 -- LINEAL
 listaSin :: Eq a => a -> [a] -> [a]
-listaSin x []     = []
-listaSin x (y:ys) = if x == y 
+listaSin x []     = error"La lista no contiene al elemento"
+listaSin x (y:ys) = if null ys || x == y 
                     then ys
                     else y : listaSin x ys
 
 unionS :: Eq a => Set a -> Set a -> Set a 
-unionS (S xs) (S ys) = S (xs ++ ys)
+unionS (S xs) (S ys) = S (sinRepetidos (xs ++ ys))
 -- LINEAL
 
 setToList :: Eq a => Set a -> [a]
 setToList (S xs) = sinRepetidos xs 
-
+-- LINEAL
 sinRepetidos :: Eq a => [a] -> [a]
-sinRepetidos [] = []
+sinRepetidos []     = []
 sinRepetidos (x:xs) =   if elem x xs
                         then sinRepetidos xs
                         else x : sinRepetidos xs
+

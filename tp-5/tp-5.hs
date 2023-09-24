@@ -1,7 +1,9 @@
 -- CALCULO DE COSTOS. 
 -- EJERCICIO 1. 
 
-import SetV2 
+import SetV2
+import StackV1
+import QueueV1
 
 data Tree a = EmptyT | NodeT a (Tree a) (Tree a)
 
@@ -105,11 +107,57 @@ unirTodos EmptyT          = emptyS
 unirTodos (NodeT l ni nd) = unionS l (unionS (unirTodos ni) (unirTodos nd))
 
 {- Funcion     SetV1  SetV2
-   emptyS      O(1)    
-   addS        O(n)
-   belongs     O(n)
-   sizeS       O(1)
-   removeS     O(n)
-   unionS      O(n^2)
-   setToList   O(1)
+   emptyS      O(1)    O(1) 
+   addS        O(n)    O(1)
+   belongs     O(n)    O(n)
+   sizeS       O(1)    O(n)
+   removeS     O(n)    O(n)
+   unionS      O(n^2)  O(n)
+   setToList   O(1)    O(n)
 -}
+
+
+-- QUEUES ------------------------
+
+lengthQ :: Queue a -> Int 
+lengthQ q = if isEmptyQ q 
+            then 0 
+            else 1 + lengthQ (dequeue q) 
+
+
+queueToList :: Queue a -> [a]
+queueToList q = if isEmptyQ q 
+                then []
+                else firstQ q : queueToList (dequeue q)
+
+unionQ :: Queue a -> Queue a -> Queue a 
+unionQ q1 q2 = agregarTodos (queueToList q2) q1 
+
+agregarTodos :: [a] -> Queue a -> Queue a 
+agregarTodos []     q = q
+agregarTodos (x:xs) q = enqueue x (agregarTodos xs q)  
+
+
+-- STACKS ----------------------
+
+apilar :: [a] -> Stack a 
+apilar []     = emptyStack 
+apilar (x:xs) = push x (apilar xs)
+
+desapilar :: Stack a -> [a]
+desapilar s = if isEmptyStack (pop s) 
+              then (top s) : []
+              else top s : desapilar(pop s)
+
+insertarEnPos :: Int -> a -> Stack a -> Stack a
+-- Dada una posicion valida para el stack dado, mete el elemento dado. 
+insertarEnPos 0 x stack = enqueue x (stack)
+insertarEnPos n x stack = if n > 0
+                          then push x (insertarEnPos (n-1) (pop stack))
+                          else error "El numero dado no es valido"
+
+stackPrueba :: Stack Int
+stackPrueba =  push 9 (push 3 emptyStack)
+
+stackPrueba2 :: Stack Int
+stackPrueba2 =  push 218 (push 12 (push 9 emptyStack))
