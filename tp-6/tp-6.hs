@@ -40,3 +40,48 @@ ejM = assocM 10 "Numero diez"
       $ assocM 20 "Numero veinte"
       $ assocM 30 "Numero treinta"
       $ emptyM
+
+values :: Eq k => Map k v -> [Maybe v] -- Costo O(n^2) Siendo n la cantidad de claves del map.
+values map = valoresDe (keys map) map   
+
+valoresDe :: Eq k => [k] -> Map k v -> [Maybe v]
+valoresDe []     map = []
+valoresDe (k:ks) map = (lookupM k map) : valoresDe ks map  -- Costo O(n^2) Siendo n la cantidad de claves del map.
+
+todasAsociadas :: Eq k => [k] -> Map k v -> Bool  -- Costo O(n^2) Siendo n la cantidad de claves de la lista.
+-- Indica si en el map se encuentran todas las claves dadas
+todasAsociadas []     map = True
+todasAsociadas (k:ks) map = estaAsociada k map && todasAsociadas ks map 
+
+estaAsociada :: Eq k => k -> Map k v -> Bool
+estaAsociada k map = esValor (lookupM k map)
+
+esValor :: Maybe v -> Bool
+esValor Nothing  = False 
+esValor (Just x) = True
+
+listToMap :: Eq k => [(k,v)] -> Map k v -- Costo O(n^2) siendo n la cantidad de claves en el map.
+listToMap []          = emptyM
+listToMap ((k,v):kvs) = assocM k v (listToMap kvs)
+
+mapToList :: Eq k => Map k v -> [(k,v)]
+mapToList map = tuplaConValores (keys map) map
+
+tuplaConValores :: Eq k => [k] -> Map k v -> [(k,v)]
+tuplaConValores []     map = []
+tuplaConValores (k:ks) map = (crearTuplaValor k map) : tuplaConValores ks map
+
+crearTuplaValor :: Eq k => k -> Map k v -> (k,v)
+crearTuplaValor k map = (k, (valorDe k map))
+
+valorDe :: Eq k => k -> Map k v -> v 
+valorDe k map = fromJust(lookupM k map)
+
+agruparEq :: Eq k => [(k,v)] -> Map k [v]
+agruparEq []          map = emptyM
+agruparEq (kv:kvs)    map = asociarConLista kv (agruparEq kvs map)
+
+asociarConLista :: Eq k => (k,v) -> Map k [v] -> Map k [v] 
+asociarConLista (k,v) map = if esValor(lookupM k map) 
+                            then assocM k (v:(valorDe k map)) map
+                            else assocM k [v] map  
