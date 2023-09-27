@@ -35,10 +35,10 @@ instance (Eq k, Show k, Show v) => Show (Map k v) where
 showAssoc k map = show k ++ "<-" ++ show (fromJust (lookupM k map))
 fromJust (Just m) = m
 
-ejM :: Map Int String
-ejM = assocM 10 "Numero diez"
-      $ assocM 20 "Numero veinte"
-      $ assocM 30 "Numero treinta"
+ejM :: Map Int Int
+ejM = assocM 10 10
+      $ assocM 20 20
+      $ assocM 30 30
       $ emptyM
 
 values :: Eq k => Map k v -> [Maybe v] -- Costo O(n^2) Siendo n la cantidad de claves del map.
@@ -78,10 +78,24 @@ valorDe :: Eq k => k -> Map k v -> v
 valorDe k map = fromJust(lookupM k map)
 
 agruparEq :: Eq k => [(k,v)] -> Map k [v]
-agruparEq []          map = emptyM
-agruparEq (kv:kvs)    map = asociarConLista kv (agruparEq kvs map)
+agruparEq []       = emptyM
+agruparEq (kv:kvs) = asociarConLista kv (agruparEq kvs)
 
 asociarConLista :: Eq k => (k,v) -> Map k [v] -> Map k [v] 
 asociarConLista (k,v) map = if esValor(lookupM k map) 
                             then assocM k (v:(valorDe k map)) map
-                            else assocM k [v] map  
+                            else assocM k [v] map 
+
+incrementar :: Eq k => [k] -> Map k Int -> Map k Int
+--Propósito: dada una lista de claves de tipo k y un map que va de k a Int, le suma uno acada número asociado con dichas claves.
+incrementar []     map = map 
+incrementar (k:ks) map = asociarValorIncrementado k (incrementar ks map) 
+-- Costo O(n^2) siendo n la longitud de la lista de claves
+
+asociarValorIncrementado :: Eq k => k -> Map k Int -> Map k Int 
+asociarValorIncrementado k map = if esValor (lookupM k map) 
+                                 then assocM k (valorDe k map + 1) map
+                                 else map
+
+
+ 
