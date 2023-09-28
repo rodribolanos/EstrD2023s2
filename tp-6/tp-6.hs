@@ -97,5 +97,11 @@ asociarValorIncrementado k map = if esValor (lookupM k map)
                                  then assocM k (valorDe k map + 1) map
                                  else map
 
+mergeMaps :: Eq k => Map k v -> Map k v -> Map k v 
+mergeMaps map1 map2 = asociarTodasEn (keys map1) map1 map2 
 
+asociarTodasEn :: Eq k => [k] -> Map k v -> Map k v -> Map k v 
+asociarTodasEn []     map1 map2     = map2
+asociarTodasEn (k:ks) map1 map2     = assocM k (valorDe k map1) (asociarTodasEn ks map1 map2) 
+ 
  
