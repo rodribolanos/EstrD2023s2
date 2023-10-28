@@ -1,8 +1,9 @@
-module Map (Map, emptyM, assocM, lookupM, deleteM, keys)
+module MapV1 (Map, emptyM, assocM, lookupM, deleteM, keys)
 where 
 data Map k v = M [(k,v)] 
 {- INV. REP. Siendo un Map k v = M [(k,v)]  
          No existen dos claves iguales en la lista de pares
+         Lista de pares clave-valor sin repetidos
          -}
     
 emptyM :: Map k v 

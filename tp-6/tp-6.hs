@@ -1,5 +1,5 @@
 import PriorityQueue 
-import Map 
+import MapV2
 
 instance (Show a, Ord a) => Show (PriorityQueue a) where 
     show pq = if isEmptyPQ pq 
@@ -100,8 +100,29 @@ asociarValorIncrementado k map = if esValor (lookupM k map)
 mergeMaps :: Eq k => Map k v -> Map k v -> Map k v 
 mergeMaps map1 map2 = asociarTodasEn (keys map1) map1 map2 
 
+
 asociarTodasEn :: Eq k => [k] -> Map k v -> Map k v -> Map k v 
 asociarTodasEn []     map1 map2     = map2
 asociarTodasEn (k:ks) map1 map2     = assocM k (valorDe k map1) (asociarTodasEn ks map1 map2) 
- 
- 
+ -- COSTO O(n^2). Siendo n la cantidad de claves de la lista. 
+
+indexar :: [a] -> Map Int a  
+indexar xs   = asociarDadoVuelta (reversa xs) 
+
+asociarDadoVuelta :: [a] -> Map Int a 
+asociarDadoVuelta []     = emptyM 
+asociarDadoVuelta (x:xs) = assocM (1 + longitud xs) x (asociarDadoVuelta xs) 
+
+reversa :: [a] -> [a] 
+reversa []     = []
+reversa (x:xs) = (reversa xs) ++ [x]
+
+longitud :: [a] -> Int 
+longitud []     = 0
+longitud (x:xs) = 1 + longitud xs
+
+ocurrencias :: String -> Map Char Int
+ocurrencias []     = emptyM 
+ocurrencias (c:cs) = if esValor c (ocurrencias cs) 
+                     then assocM c (valorDe c (ocurrencias cs) +1) ocurrencias cs 
+                     else assocM c 1 (ocurrencias cs)
