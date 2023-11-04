@@ -18,7 +18,7 @@ int denominador(Fraccion f) {
 }
 
 float division(Fraccion f) {
-    float resultado = (float) f.numerador / f.denominador;
+    float resultado = (float) f.numerador / f.denominador ;
     return resultado;
 }
 

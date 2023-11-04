@@ -88,8 +88,9 @@ int main() {
     //desdeCeroHastaN2(4);
     Fraccion f1 = consFraccion(20, 10);
     Fraccion f2 = consFraccion(30, 20);
-    Fraccion f3 = simplificada (multF(f1,f2));
-    cout << f3.numerador << ", " << f3.denominador << endl;
+    Fraccion f3 = simplificada(multF(f1,f2));
+    float f4 = division(f2);
+    cout << f4 << endl;
 }
 
 /* 1. // Precondición: c1 < c2
