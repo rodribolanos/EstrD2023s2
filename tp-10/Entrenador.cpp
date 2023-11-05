@@ -5,15 +5,15 @@ using namespace std;
 
 struct EntrenadorSt {
     string nombre;
-    Pokemon* pokemon;
+    Pokemon* pokemons;
     int cantPokemon;
 };
 
-Entrenador consEntrenador(string nombre, int cantidad, Pokemon* pokemon) {
+Entrenador consEntrenador(string nombre, int cantidad, Pokemon* pokemons) {
     Entrenador e = new EntrenadorSt;
     e->nombre = nombre;
     e->cantPokemon = cantidad;
-    e->pokemon = pokemon;
+    e->pokemons = pokemons;
     return e;
 }
 
@@ -41,7 +41,7 @@ int cantidadDePokemonDe(TipoDePokemon tipo, Entrenador e) {
     int c = e->cantPokemon;
     int contador = 0;
     for(int i=0; i < c; i++) {
-        Pokemon p = e->pokemon[i];
+        Pokemon p = e->pokemons[i];
         contador = contador + unoSi(esDeTipo(tipo, p));
     }
     return contador;
@@ -49,7 +49,7 @@ int cantidadDePokemonDe(TipoDePokemon tipo, Entrenador e) {
 
 Pokemon pokemonNro(int i, Entrenador e) {
     if (i > 0 && i <= e->cantPokemon) {
-    return e->pokemon[i-1];
+    return e->pokemons[i-1];
   }
 }
 
