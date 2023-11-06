@@ -13,12 +13,12 @@ Capacidad >= cantidad
 cantidad representa el numero de elementos en el array con valor. */
 
 ArrayList newArrayList() {
-    ArrayList array;
+    ArrayList array = new ArrayListSt;
     array->cantidad = 0;
     array->elementos = new int[16];
     array->capacidad = 16;
     return array;
-};
+}
 
 ArrayList newArrayListWith(int capacidad) {
     ArrayList array;
@@ -38,7 +38,9 @@ int get(int i, ArrayList xs) {
 }
 
 void set(int i, int x, ArrayList xs) {
-    xs->elementos[i] = x;
+    if (xs->cantidad >= i) {
+        xs->elementos[i-1] = x;
+    } 
 }
 
 void reescribirDecrementado(int x, ArrayList xs) {
@@ -73,13 +75,16 @@ void resize(int capacidad, ArrayList xs) {
 }
 
 void add(int x, ArrayList xs) {
-    if (xs->capacidad >= xs->cantidad) {
+    if (xs->cantidad >= xs->capacidad) {
+        aumentarTamano(xs->capacidad * 2, xs);    
+    }
     int posicionAAgregar = xs->cantidad;
     xs->elementos[posicionAAgregar] = x;
-    }
+    xs->cantidad++;
 }
 
 void remove(ArrayList xs) {
     int posicionABorrar = xs->cantidad;
     xs->elementos[posicionABorrar] = -1;
+    xs->cantidad--;
 }

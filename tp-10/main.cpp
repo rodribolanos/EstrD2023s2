@@ -29,7 +29,7 @@ int prueba2() {
     cout << "Pikachu supera a polito: " << superaA(pikachu, polito) << endl;
 }
 
-int main() {
+int pruebaEnt() {
     Pokemon* pokes = new Pokemon[1];
     pokes[0] = consPokemon("Agua");
     Pokemon* pokes2 = new Pokemon[2];
@@ -45,8 +45,65 @@ int main() {
     cout << "Rodri le gana a todos los de martu: " << leGanaATodos(rodri, martu) << endl;
 }
 
-int array() {
+
+int sumatoria(ArrayList xs) {
+    int contador = 0;
+    for (int i=1; i <= lengthAL(xs); i++ ) {
+        contador += get(i, xs);
+    }
+    return contador;
+}
+
+void sucesores(ArrayList xs) {
+    for (int i=1; i <= lengthAL(xs); i++) {
+        int iesimoElemento = get(i, xs);
+        set(i, iesimoElemento +1 , xs);
+    }
+}
+
+bool pertenece(int x, ArrayList xs) {
+    bool belongs = false;
+    for (int i=1; !belongs || i <= lengthAL(xs); i++) {
+        belongs =  ( x == get(i, xs) );
+    }
+    return belongs;
+}
+
+ArrayList append(ArrayList xs, ArrayList ys) {
+    int tamanoPri = lengthAL(xs);
+    int tamanoSeg = lengthAL(ys);
+    resize(tamanoPri + tamanoSeg, xs); 
+    for (int i = 1; i <= tamanoSeg; i++) {
+        int elementoAAgregar = get(i, ys);
+        add(elementoAAgregar, xs);
+    }
+    return xs;
+}
+
+int elMenor(int x, int y) {
+    return (x < y) ? x : y;
+}
+
+int minimo(ArrayList xs) {
+        int minimo = get(1, xs);
+        for (int i=2; i <= lengthAL(xs); i++) {
+            minimo = elMenor(minimo, get(i, xs));
+        }   
+     return minimo;
+}
+int main() {
     ArrayList array = newArrayList();
     add(5, array);
+    add(20, array);
+    add(40, array);
     cout << "El primer elemento del array: " << get(1, array) << endl;
+    cout << "La longitud del array: " << lengthAL(array) << endl;
+    cout << "El 3er elemento es: " << get(3, array) << endl;
+    cout << "La sumatoria hasta ahora: " << sumatoria(array) << endl;
+    set(3, 25, array);
+    cout << "El 3er elemento es: " << get(3, array) << endl;
+    cout << "La sumatoria hasta ahora: " << sumatoria(array) << endl;
+    sucesores(array);
+    cout << "La sumatoria hasta ahora son 3 numeros mas: " << sumatoria(array) << endl;
+    cout << "Pertenece el numero 26: " << pertenece(26, array) << endl;
 }

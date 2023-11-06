@@ -9,7 +9,7 @@ ArrayList newArrayList();
 ArrayList newArrayListWith(int capacidad);
 
 //Devuelve la cantidad de elementos existentes
-int lengthAl(ArrayList xs);
+int lengthAL(ArrayList xs);
 
 //Devuelve en iesimo elemento de la lista
 int get(int i, ArrayList xs);
