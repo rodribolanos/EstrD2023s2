@@ -56,14 +56,14 @@ Pokemon pokemonNro(int i, Entrenador e) {
 bool leGanaATodosLosDe(Pokemon p, Entrenador e) {
     bool leGana = false; 
     for (int i=0; i < e->cantPokemon; i++) {
-        Pokemon p2 = e->pokemon[i];
+        Pokemon p2 = e->pokemons[i];
         leGana = leGana || superaA(p, p2);
     }
 }
 bool leGanaATodos(Entrenador e1, Entrenador e2) {
     bool leGana = true;
     for (int i=0; i < e2->cantPokemon; i++) {
-        Pokemon p = e2->pokemon[i];
+        Pokemon p = e2->pokemons[i];
         leGana = leGana && leGanaATodosLosDe(p, e1);
     }
     return leGana;

@@ -14,4 +14,13 @@ int lengthAl(ArrayList xs);
 //Devuelve en iesimo elemento de la lista
 int get(int i, ArrayList xs);
 
-//Reemplaza 
+//Reemplaza el iesimo elemento por otro dado
+void set(int i, int x, ArrayList xs);
+
+//Decrementa o aumenta la capacidad del array 
+// En caso de decrementarla se pierden los elementos del final de la lista
+void resize(int capacidad, ArrayList xs);
+
+void add(int x, ArrayList xs);
+
+void remove(ArrayList xs);

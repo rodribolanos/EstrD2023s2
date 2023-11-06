@@ -3,6 +3,7 @@ using namespace std;
 #include "Persona.h"
 #include "Pokemon.h"
 #include "Entrenador.h"
+#include "ArrayList.h"
 
 int prueba1() {
     Persona agustin = consPersona("agustin", 30);
@@ -31,11 +32,21 @@ int prueba2() {
 int main() {
     Pokemon* pokes = new Pokemon[1];
     pokes[0] = consPokemon("Agua");
-    Pokemon* pokes = new Pokemon[1];
+    Pokemon* pokes2 = new Pokemon[2];
+    pokes2[0] = consPokemon("Fuego");
+    pokes2[1] = consPokemon("Fuego");
     Entrenador rodri = consEntrenador("rodri", 1, pokes);
+    Entrenador martu = consEntrenador("Martu", 2, pokes2);
     cout << "Nombre: " << nombreDeEntrenador(rodri) << endl;
     cout << "Cantidad de Pokemon: " << cantidadDePokemon(rodri) << endl;
     cout << "Cantidad de Pokemon de Agua: " << cantidadDePokemonDe("Agua", rodri) << endl;
     cout << "Cantidad de Pokemon de Fuego: " << cantidadDePokemonDe("Fuego", rodri) << endl;
     cout << "TipoDePokemon Nro 1: " << tipoDePokemon(pokemonNro(1, rodri)) << endl;
+    cout << "Rodri le gana a todos los de martu: " << leGanaATodos(rodri, martu) << endl;
+}
+
+int array() {
+    ArrayList array = newArrayList();
+    add(5, array);
+    cout << "El primer elemento del array: " << get(1, array) << endl;
 }
