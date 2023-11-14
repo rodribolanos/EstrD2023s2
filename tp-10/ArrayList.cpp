@@ -43,7 +43,7 @@ void set(int i, int x, ArrayList xs) {
     } 
 }
 
-void reescribirDecrementado(int x, ArrayList xs) {
+void resize(int capacidad, ArrayList xs) {
     int* temp = xs->elementos; 
     int* nuevosElementos = new int[x];
     int i = 0;
@@ -54,24 +54,6 @@ void reescribirDecrementado(int x, ArrayList xs) {
     xs->capacidad = x;
     xs->cantidad = i;
     xs->elementos = nuevosElementos;
-}
-
-void aumentarTamano(int x, ArrayList xs) {
-    int* nuevosElementos = new int[x];
-    for (int i = 0; i < xs->cantidad; i++) {
-        nuevosElementos[i] = xs->elementos[i];
-    }
-    delete xs->elementos; // DUDA? CUANDO ELEMINO ACA, ELEMINO A LO QUE APUNTA ESTO?
-    xs->capacidad = x;
-    xs->elementos = nuevosElementos;
-}
-
-void resize(int capacidad, ArrayList xs) {
-    if (capacidad < xs->capacidad) {
-        reescribirDecrementado(capacidad, xs);
-    } else {
-        aumentarTamano(capacidad, xs);
-    }
 }
 
 void add(int x, ArrayList xs) {
