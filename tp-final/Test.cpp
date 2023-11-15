@@ -1,4 +1,5 @@
 #include "Test.h"
+#include "UFSet.h"
 
 void imprimirEquipos(vector<Equipo> equipos) {
     cout << "Equipos { " << endl;
