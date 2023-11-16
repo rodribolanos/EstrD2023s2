@@ -14,14 +14,16 @@
  */
 struct UFNode {
    ELEM_TYPE element;               // Elemento asociado al nodo. En el caso de nuestro TP, sera Equipo.
-   UFNode* parent;         // Puntero a los UFNode con los que comparte conjunto 
-   int rank;
+   UFNode* parent;                  // Puntero a los UFNode con los que comparte conjunto 
+   int rank;                        // El rango del UFNode, es la longitud de la maxima rama de UFSet´s que lo apuntan 
+   int cantidadDeHijosRank;         // Cantidad de hijos con rango alto. (Rango alto es el rank del UFNode - 1)          
 };
 
 /* INVARIANTE DE REPRESENTACION: 
    En caso de un UFNode z ser la raiz del arbol, parent = *z 
    parent tiene SIEMPRE un valor, no puede ser NULL.
-
+   
+   cantidadDeHijosRank >= 0
    rank >=0 
 */
 
@@ -32,32 +34,73 @@ UFSet createUFS(ELEM_TYPE value) {
    UFNode* ufs = new UFNode;
    ufs->element = value; 
    ufs->parent = ufs;
+   ufs->cantidadDeHijosRank = 0;
    return ufs;
 }
 
+void actualizarRango(UFSet r1, UFSet r2) {
+// PROPOSITO: Verifica si r2 es un nuevo hijo de rango (r1->rank - 1)
+// PRECONDICION: El rango de r1 es MAYOR a el rango de r2. Sino rompe invariante.
+    if (r1->rank == r2->rank + 1) {
+        r1->cantidadDeHijosRank++;
+    } 
+}
+
+void actualizarPadre(UFSet r1, UFSet r2) {
+// PROPOSITO: Actualiza el padre de r2, que pasa a apuntar a r1.
+// PRECONDICION: El rango de r1 es MAYOR al rango de r2    
+    r2->parent = r1;
+    actualizarRango(r1,r2);
+}
+
+void verificarRango(UFSet hijo, UFSet padre) {
+// PROPOSITO: Actualiza en caso de ser necesario el rango de padre.
+// PRECONDICION: El rank de hijo es MENOR al rank de padre.
+    if (hijo->rank + 1 == padre->rank) {
+        padre->cantidadDeHijosRank--;
+    } 
+    if (padre->cantidadDeHijosRank == 0) {
+        padre->rank--;
+    }   
+}
 
 UFSet findUFS(UFSet elem) {
    UFNode* raiz = elem;                     // Copio el puntero que me ofrecieron como si fuese su propio padre
-   int elementosRecorridos = -1;             // La cantidad de elementos que estan por encima de si mismo, empieza en -1 ya
-                                             // que no tomaremos en cuenta al padre. 
-   while (raiz->parent != raiz) { // Bucle buscando quien es el padre del UFSet otorgado
+   while (raiz->parent != raiz) {           // Bucle buscando quien es el padre del UFSet otorgado
       raiz = raiz->parent;
-      elementosRecorridos = elementosRecorridos + 1;
    }   
    // Recursion iterativa para hacer que todos los elementos por encima del otorgado, apunten a la raiz 
    // La raiz ya se encontro, este codigo es la compresion de camino.
    UFNode* hoja = elem;
-   while (hoja->parent != raiz) {     //Si el padre del UFNode* actual hoja es igual a la raiz, significa que se procesaron todos los elementos de por medio
+   while (hoja != raiz) {     //Si el padre del UFNode* actual hoja es igual a la raiz, significa que se procesaron todos los elementos de por medio
       UFNode* proximo = hoja->parent; // Almaceno el proximo puntero para que no haya memory leak
-      hoja->parent = raiz;            // El elemento actual apunta a la raiz
-      // No tocamos el rank de hoja en este momento, ya que todos los que lo apuntan, seguiran apuntandolo.                      
-      hoja = proximo;                         // Se pasa a iterar sobre el prox elemento del UFSet.
-      
+      hoja->parent = raiz;            
+    // No tocamos el rank de hoja en este momento, ya que todos los que lo apuntan, seguiran apuntandolo.                      
+      verificarRango(hoja, proximo);  // En este momento si se cambia el rango del proximo
+      hoja = proximo;                 // Se pasa a iterar sobre el prox elemento del UFSet.
    }
    return raiz;
 }
 
+UFSet elMayorEntre(UFSet r1, UFSet r2) {
+    // PROPOSITO: Indica el UFSet con mayor rango entre r1 y r2
+    // PRECONDICION: El rango de r1 y r2 no es igual 
+    if (r1->rank > r2->rank) {
+        return r1;
+    } else {
+        return r2;
+    }
+}
 
+UFSet elMenorEntre(UFSet r1, UFSet r2) {
+    // PROPOSITO: Indica el UFSet con mayor rango entre r1 y r2
+    // PRECONDICION: El rango de r1 y r2 no es igual 
+    if (r1->rank > r2->rank) {
+        return r2;
+    } else {
+        return r1;
+    }
+}
 /*
  * Calcula la unión entre los conjuntos ufset1 y ufset2. 
  * Esta operación puede ser optimizada con la técnica de unión por rango.
@@ -65,14 +108,14 @@ UFSet findUFS(UFSet elem) {
 void unionUFS(UFSet ufset1, UFSet ufset2) {
    UFNode* raiz1 = findUFS(ufset1);
    UFNode* raiz2 = findUFS(ufset2);
-   if (raiz1->rank > raiz2->rank) {
-      raiz2->parent = raiz1;    // En caso del rango del padre de UFSet1, ser mayor al 2, hacemos que el 2 apunte al 1
-   } else if (raiz1->rank == raiz2->rank){
-      raiz2->parent = raiz1;    // En caso que los rangos sean iguales, el 2 apunta al 1. Y el rango de 1 suma 1.
-      raiz1->rank++;             
-   } else {
-      raiz1->parent = raiz2;    // En caso del rango del padre de UFSet2, ser mayor al 1, hacemos que el 1 apunte al 2
-   }
+   if (raiz1->rank == raiz2->rank){
+      raiz2->parent = raiz1;          // En caso que los rangos sean iguales, el 2 apunta al 1. Y el rango de 1 suma 1.
+      raiz1->rank++;                  // A su vez, como sus rangos son iguales, el padre tiene que aumentar en 1 el rango
+      raiz1->cantidadDeHijosRank = 1;  // Como tuvo que aumentar el rango, significa que su hijo con mayor rango es solo 1.
+   } else {  
+    // En caso de no ser iguales, actualiza el padre entre el de mayor rango y el de menor entre las dos raices.
+    actualizarPadre(elMayorEntre(raiz1, raiz2), elMenorEntre(raiz1,raiz2));
+    }
 }
 
 /* Devuelve el valor asociado a elemento de tipo UFSet */
