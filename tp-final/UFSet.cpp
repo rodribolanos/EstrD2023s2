@@ -75,8 +75,10 @@ UFSet findUFS(UFSet elem) {
    while (hoja != raiz) {     //Si el padre del UFNode* actual hoja es igual a la raiz, significa que se procesaron todos los elementos de por medio
       UFNode* proximo = hoja->parent; // Almaceno el proximo puntero para que no haya memory leak
       hoja->parent = raiz;            
-    // No tocamos el rank de hoja en este momento, ya que todos los que lo apuntan, seguiran apuntandolo.                      
-      verificarRango(hoja, proximo);  // En este momento si se cambia el rango del proximo
+    // No tocamos el rank de hoja en este momento, ya que todos los que lo apuntan, seguiran apuntandolo.            
+     if (proximo != raíz && raiz->rank != 1) {         
+      verificarRango(hoja, proximo);  // En este momento si se cambia el rango del proximo 
+}
       hoja = proximo;                 // Se pasa a iterar sobre el prox elemento del UFSet.
    }
    return raiz;
