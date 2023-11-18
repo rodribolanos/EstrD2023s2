@@ -75,9 +75,14 @@ int numeroACambiar(UFSet hoja, UFSet proximo) {
 }
 
 void verificarRangoRaiz(UFSet hoja, UFSet raiz, int numero) {
-   if (numero == 2 && (hoja->rank + numero - raiz->rank == 0)) {
-     raiz->rank--;
+// PROPOSITO: Verifica si la hoja fue disminuida de rango (numero == 2), si la hoja era uno de los 
+// hijos de rango superior a  
+   if (numero == 2 && (hoja->rank + numero == raiz->rank)) {
+      raiz->cantidadDeHijosRank--;
    } 
+   if (raiz->cantidadDeHijosRank == 0) {
+      raiz->rank--;
+   }   
 } 
 UFSet findUFS(UFSet elem) {
    UFNode* raiz = elem;                     // Copio el puntero que me ofrecieron como si fuese su propio padre
