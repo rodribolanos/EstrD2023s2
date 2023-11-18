@@ -79,10 +79,13 @@ void verificarRangoRaiz(UFSet hoja, UFSet raiz, int numero) {
 // hijos de rango superior a  
    if (numero == 2 && (hoja->rank + numero == raiz->rank)) {
       raiz->cantidadDeHijosRank--;
-   } 
-   if (raiz->cantidadDeHijosRank == 0) {
+      if (raiz->cantidadDeHijosRank == 0) {
+      // En caso de que la cantidad de hijos haya sido 0 la resta anterior, significa que hay un hijo al menos 
+      // del rank -2. Por lo que podriamos el rank baja en 1, y tiene al menos 1 hijo de ese rank -1  
       raiz->rank--;
-   }   
+      raiz->cantidadDeHijosRank = 1; 
+   } 
+   }
 } 
 UFSet findUFS(UFSet elem) {
    UFNode* raiz = elem;                     // Copio el puntero que me ofrecieron como si fuese su propio padre
