@@ -86,7 +86,7 @@ UFSet findUFS(UFSet elem) {
       UFNode* proximo = hoja->parent; // Almaceno el proximo puntero para que no haya memory leak
       hoja->parent = raiz;            
     // No tocamos el rank de hoja en este momento, ya que todos los que lo apuntan, seguiran apuntandolo.            
-     if (hoja != raíz && raiz->rank != 1) {
+     if (hoja->parent != raíz) {
       verificarRango(hoja, proximo, numero);  // En este momento si se cambia el rango del proximo
       numero = numeroACambiar(hoja, proximo);
 }
