@@ -53,10 +53,12 @@ void actualizarPadre(UFSet r1, UFSet r2) {
     actualizarRango(r1,r2);
 }
 
-void verificarRango(UFSet hijo, UFSet padre) {
+void verificarRango(UFSet hijo, UFSet padre, int numero) {
 // PROPOSITO: Actualiza en caso de ser necesario el rango de padre.
 // PRECONDICION: El rank de hijo es MENOR al rank de padre.
-    if (hijo->rank + 1 == padre->rank) {
+// OBS: numero <= 2. El numero indica la diferencia de rango entre hijo y padre
+// El unico caso en que es 2, es si el hijo decremento su rango previamente 
+   if (hijo->rank + numero == padre->rank) {
         padre->cantidadDeHijosRank--;
     } 
     if (padre->cantidadDeHijosRank == 0) {
@@ -64,6 +66,13 @@ void verificarRango(UFSet hijo, UFSet padre) {
     }   
 }
 
+int numeroACambiar(UFSet hoja, UFSet proximo) {
+   if (padre->cantidadDeHijosRank == 0) {
+        return 2;
+    } else  {
+      return 1;
+    }
+}
 UFSet findUFS(UFSet elem) {
    UFNode* raiz = elem;                     // Copio el puntero que me ofrecieron como si fuese su propio padre
    while (raiz->parent != raiz) {           // Bucle buscando quien es el padre del UFSet otorgado
@@ -72,12 +81,14 @@ UFSet findUFS(UFSet elem) {
    // Recursion iterativa para hacer que todos los elementos por encima del otorgado, apunten a la raiz 
    // La raiz ya se encontro, este codigo es la compresion de camino.
    UFNode* hoja = elem;
+   int numero = 1;
    while (hoja != raiz) {     //Si el padre del UFNode* actual hoja es igual a la raiz, significa que se procesaron todos los elementos de por medio
       UFNode* proximo = hoja->parent; // Almaceno el proximo puntero para que no haya memory leak
       hoja->parent = raiz;            
     // No tocamos el rank de hoja en este momento, ya que todos los que lo apuntan, seguiran apuntandolo.            
-     if (proximo != raíz && raiz->rank != 1) {         
-      verificarRango(hoja, proximo);  // En este momento si se cambia el rango del proximo 
+     if (hoja != raíz && raiz->rank != 1) {
+      verificarRango(hoja, proximo, numero);  // En este momento si se cambia el rango del proximo
+      numero = numeroACambiar(hoja, proximo);
 }
       hoja = proximo;                 // Se pasa a iterar sobre el prox elemento del UFSet.
    }
