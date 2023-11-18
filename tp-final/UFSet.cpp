@@ -73,6 +73,12 @@ int numeroACambiar(UFSet hoja, UFSet proximo) {
       return 1;
     }
 }
+
+void verificarRangoRaiz(UFSet hoja, UFSet raiz, int numero) {
+   if (numero == 2 && (hoja->rank + numero - raiz->rank == 0)) {
+     raiz->rank--;
+   } 
+} 
 UFSet findUFS(UFSet elem) {
    UFNode* raiz = elem;                     // Copio el puntero que me ofrecieron como si fuese su propio padre
    while (raiz->parent != raiz) {           // Bucle buscando quien es el padre del UFSet otorgado
@@ -85,11 +91,14 @@ UFSet findUFS(UFSet elem) {
    while (hoja != raiz) {     //Si el padre del UFNode* actual hoja es igual a la raiz, significa que se procesaron todos los elementos de por medio
       UFNode* proximo = hoja->parent; // Almaceno el proximo puntero para que no haya memory leak                  
     // No tocamos el rank de hoja en este momento, ya que todos los que lo apuntan, seguiran apuntandolo.            
-      if (hoja->parent != raiz)  {
+      if (proximo != raiz)  {
       hoja->parent = raiz;
       verificarRango(hoja, proximo, numero);  // En este momento si se cambia el rango del proximo
       numero = numeroACambiar(hoja, proximo);
-}
+}  else {
+   verificarRangoRaiz(hoja, raiz, numero); // En este punto, tenemos los ultimos dos elementos. Verificaremos que la hoja (quien seguira apuntando
+// a la raiz, no haya bajado su rango. En ese caso, bajaremos en 1 la cantidad de elementos que lo apuntan
+} 
       hoja = proximo;                 // Se pasa a iterar sobre el prox elemento del UFSet.
    }
    return raiz;
