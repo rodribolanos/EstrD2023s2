@@ -74,5 +74,18 @@ int main()
     caso3.push_back(panama);
     test("Caso 3", caso3);
 
+    UFSet uFestadosUnidos = createUFS(estadosUnidos);
+    UFSet uFcostaRica     = createUFS(costaRica);
+    UFSet uFcolombia      = createUFS(colombia);
+    UFSet uFparaguay      = createUFS(paraguay);
+    
+    // Casos de test
+    unionUFS(uFestadosUnidos, uFcostaRica); unionUFS(uFcolombia, uFparaguay);
+    cout << "El representante de Costa Rica: " << nombreEquipo(elemUFS(findUFS(uFcostaRica))) << endl;
+    cout << "El grupo de Costa Rica: " << grupoEquipo(elemUFS(findUFS(uFcostaRica))) << endl;
+    cout << "El grupo de Estados Unidos: " << grupoEquipo(elemUFS(findUFS(uFestadosUnidos))) << endl;
+    cout << "El representante de Colombia previo a la union con estados Unidos: " << nombreEquipo(elemUFS(findUFS(uFcolombia))) << endl;
+    unionUFS(uFestadosUnidos, uFcolombia);
+    cout << "El representante de Colombia post a la union con estados Unidos: " << nombreEquipo(elemUFS(findUFS(uFcolombia))) << endl;
     return 0;
 }

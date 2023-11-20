@@ -20,20 +20,27 @@ struct UFNode {
 };
 
 /* INVARIANTE DE REPRESENTACION: 
-   En caso de un UFNode z ser la raiz del arbol, parent = *z 
+   En caso de un UFNode z ser su representante, z->parent = *z 
    parent tiene SIEMPRE un valor, no puede ser NULL.
-   
+   En caso de z->parent != *z, un recorrido a traves de z->parent, en ningun momento es = *z
+
    cantidadDeHijosRank >= 0
    rank >=0 
 */
 
+/*OBSERVACION: En la siguiente implementacion se provee un recurso de union por ranking para realizar el find a menor costo,
+esto requiere un atributo de rank, y como implementacion personal un atributo con la cantidad de hijos de ese rank -1.
+al momento de decrementar el ranking de un UFNode, en la primer decrecion se realiza de manera correcta la disminucion del ranking, 
+pero solo podemos asumir que el padre tendra 1 hijo de su rango decrementado en 1, es decir, el que habia decrementado previamente. 
+No podemos confirmar si hay mas de 1, por lo que en ciertos puntos la implementacion no es del todo solida. */
 /* 
  * Inicializa el UFSet ufset, cuyo valor asociado será value 
  */
 UFSet createUFS(ELEM_TYPE value) {
-   UFNode* ufs = new UFNode;
+   UFNode* ufs  = new UFNode;
    ufs->element = value; 
-   ufs->parent = ufs;
+   ufs->parent  = ufs;
+   ufs->rank    = 0;
    ufs->cantidadDeHijosRank = 0;
    return ufs;
 }
@@ -66,8 +73,8 @@ void verificarRango(UFSet hijo, UFSet padre, int numero) {
     }   
 }
 
-int numeroACambiar(UFSet hoja, UFSet proximo) {
-   if (padre->cantidadDeHijosRank == 0) {
+int numeroACambiar(UFSet proximo) {
+   if (proximo->cantidadDeHijosRank == 0) {
         return 2;
     } else  {
       return 1;
@@ -100,9 +107,9 @@ UFSet findUFS(UFSet elem) {
       UFNode* proximo = hoja->parent; // Almaceno el proximo puntero para que no haya memory leak                  
     // No tocamos el rank de hoja en este momento, ya que todos los que lo apuntan, seguiran apuntandolo.            
       if (proximo != raiz)  {
-hoja->parent = raiz;
+      hoja->parent = raiz;
       verificarRango(hoja, proximo, numero);  // En este momento si se cambia el rango del proximo
-      numero = numeroACambiar(hoja, proximo);
+      numero = numeroACambiar(proximo);
 }  else {
    verificarRangoRaiz(hoja, raiz, numero); // En este punto, tenemos los ultimos dos elementos. Verificaremos que la hoja (quien seguira apuntando
 // a la raiz, no haya bajado su rango. En ese caso, bajaremos en 1 la cantidad de elementos que lo apuntan
@@ -131,14 +138,10 @@ UFSet elMenorEntre(UFSet r1, UFSet r2) {
         return r1;
     }
 }
-/*
- * Calcula la unión entre los conjuntos ufset1 y ufset2. 
- * Esta operación puede ser optimizada con la técnica de unión por rango.
- */
-void unionUFS(UFSet ufset1, UFSet ufset2) {
-   UFNode* raiz1 = findUFS(ufset1);
-   UFNode* raiz2 = findUFS(ufset2);
-   if (raiz1->rank == raiz2->rank){
+
+void actualizarUnionRango(UFSet raiz1, UFSet raiz2) {
+    // Sin optimizacion de rango: raiz2->parent = raiz1
+    if (raiz1->rank == raiz2->rank){
       raiz2->parent = raiz1;          // En caso que los rangos sean iguales, el 2 apunta al 1. Y el rango de 1 suma 1.
       raiz1->rank++;                  // A su vez, como sus rangos son iguales, el padre tiene que aumentar en 1 el rango
       raiz1->cantidadDeHijosRank = 1;  // Como tuvo que aumentar el rango, significa que su hijo con mayor rango es solo 1.
@@ -146,6 +149,17 @@ void unionUFS(UFSet ufset1, UFSet ufset2) {
     // En caso de no ser iguales, actualiza el padre entre el de mayor rango y el de menor entre las dos raices.
     actualizarPadre(elMayorEntre(raiz1, raiz2), elMenorEntre(raiz1,raiz2));
     }
+}
+/*
+ * Calcula la unión entre los conjuntos ufset1 y ufset2. 
+ * Esta operación puede ser optimizada con la técnica de unión por rango.
+ */
+void unionUFS(UFSet ufset1, UFSet ufset2) {
+   UFNode* raiz1 = findUFS(ufset1);
+   UFNode* raiz2 = findUFS(ufset2);
+   if (raiz1 != raiz2) {
+    actualizarUnionRango(raiz1, raiz2);
+   }
 }
 
 /* Devuelve el valor asociado a elemento de tipo UFSet */
