@@ -144,7 +144,7 @@ void actualizarUnionRango(UFSet raiz1, UFSet raiz2) {
     if (raiz1->rank == raiz2->rank){
       raiz2->parent = raiz1;          // En caso que los rangos sean iguales, el 2 apunta al 1. Y el rango de 1 suma 1.
       raiz1->rank++;                  // A su vez, como sus rangos son iguales, el padre tiene que aumentar en 1 el rango
-      raiz1->cantidadDeHijosRank = 1;  // Como tuvo que aumentar el rango, significa que su hijo con mayor rango es solo 1.
+      raiz1->cantidadDeHijosRank = 1; // Como tuvo que aumentar el rango, significa que su hijo con mayor rango es solo 1.
    } else {  
     // En caso de no ser iguales, actualiza el padre entre el de mayor rango y el de menor entre las dos raices.
     actualizarPadre(elMayorEntre(raiz1, raiz2), elMenorEntre(raiz1,raiz2));
