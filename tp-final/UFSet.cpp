@@ -26,11 +26,10 @@ struct UFNode {
    rank >=0 
 */
 
-/*OBSERVACION: En la siguiente implementacion se provee un recurso de union por ranking para realizar el find a menor costo,
-esto requiere un atributo de rank, y como implementacion personal un atributo con la cantidad de hijos de ese rank -1.
-al momento de decrementar el ranking de un UFNode, en la primer decrecion se realiza de manera correcta la disminucion del ranking, 
-pero solo podemos asumir que el padre tendra 1 hijo de su rango decrementado en 1, es decir, el que habia decrementado previamente. 
-No podemos confirmar si hay mas de 1, por lo que en ciertos puntos la implementacion no es del todo solida. */
+/*OBSERVACION: En la siguiente implementacion se provee una funcion unionUFS, que esta optimizada con la tecnica 
+union por rango, que une al UFSet con menor rango al de mayor, ya que realizar para luego realizar un find, el costo es menor.
+La implementacion no es solida al momento de disminuir el rango al momento de hacer un find y modificar el UFSet, ya que un UFSet 
+NO conoce a quienes lo apuntan, por lo que va a ser imposible determinar su nuevo rango. */
 /* 
  * Inicializa el UFSet ufset, cuyo valor asociado será value 
  */
