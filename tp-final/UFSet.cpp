@@ -19,7 +19,7 @@ struct UFNode {
 };
 
 /* INVARIANTE DE REPRESENTACION: 
-   En caso de un UFNode z ser su representante, z->parent = *z 
+   En caso de un UFNode z ser la raiz del UFSet, z->parent = *z 
    parent tiene SIEMPRE un valor, no puede ser NULL.
    En caso de z->parent != *z, un recorrido a traves de z->parent, en ningun momento es = *z
 
@@ -27,8 +27,8 @@ struct UFNode {
 */
 
 /*OBSERVACION: En la siguiente implementacion se provee una funcion unionUFS, que esta optimizada con la tecnica 
-union por rango, que une al UFSet con menor rango al de mayor, ya que realizar para luego realizar un find, el costo es menor.
-La implementacion no es solida al momento de disminuir el rango al momento de hacer un find y modificar el UFSet, ya que un UFSet 
+union por rango, que une al UFSet con menor rango al de mayor, ya que para luego realizar un find, el costo es menor.
+La implementacion no es solida al momento de disminuir el rango, cuando se realiza un find y se modifica el UFSet, ya que un UFSet 
 NO conoce a quienes lo apuntan, por lo que va a ser imposible determinar su nuevo rango. */
 /* 
  * Inicializa el UFSet ufset, cuyo valor asociado será value 
@@ -56,11 +56,9 @@ UFSet findUFS(UFSet elem) {
    UFNode* hoja = elem;
    int numero = 1;
    while (hoja != raiz) {     //Si el padre del UFNode* actual hoja es igual a la raiz, significa que se procesaron todos los elementos de por medio
-      UFNode* proximo = hoja->parent; // Almaceno el proximo puntero para que no haya memory leak                  
-    // No tocamos el rank de hoja en este momento, ya que todos los que lo apuntan, seguiran apuntandolo.            
+      UFNode* proximo = hoja->parent; // Almaceno el proximo puntero para que no haya memory leak                              
       hoja->parent = raiz;
-    
-      hoja = proximo;                 // Se pasa a iterar sobre el prox elemento del UFSet.
+      hoja = proximo;                 // Se pasa a iterar sobre el viejo padre.
    }
    return raiz;
    }
@@ -85,7 +83,7 @@ UFSet elMenorEntre(UFSet r1, UFSet r2) {
     }
 }
 
-void actualizarUnionRango(UFSet raiz1, UFSet raiz2) {
+void actualizarUnion(UFSet raiz1, UFSet raiz2) {
     // Sin optimizacion de rango: raiz2->parent = raiz1
     if (raiz1->rank == raiz2->rank){
       raiz2->parent = raiz1;          // En caso que los rangos sean iguales, el 2 apunta al 1. Y el rango de 1 suma 1.
@@ -100,6 +98,7 @@ void actualizarUnionRango(UFSet raiz1, UFSet raiz2) {
  * Esta operación puede ser optimizada con la técnica de unión por rango.
  */
 void unionUFS(UFSet ufset1, UFSet ufset2) {
+   // PRECONDICION: Las raices de ufset1 y ufset2 son distintas.
    UFNode* raiz1 = findUFS(ufset1);
    UFNode* raiz2 = findUFS(ufset2);
    if (raiz1 != raiz2) {

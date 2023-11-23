@@ -78,6 +78,10 @@ int main()
     UFSet uFcostaRica     = createUFS(costaRica);
     UFSet uFcolombia      = createUFS(colombia);
     UFSet uFparaguay      = createUFS(paraguay);
+    UFSet uFhaiti         = createUFS(haiti);
+    UFSet uFmexico        = createUFS(mexico);
+    UFSet uFargentina     = createUFS(argentina);
+    UFSet uFbolivia       = createUFS(bolivia);
     
     // Casos de test
     unionUFS(uFestadosUnidos, uFcostaRica); unionUFS(uFcolombia, uFparaguay);
@@ -87,5 +91,23 @@ int main()
     cout << "El representante de Colombia previo a la union con estados Unidos: " << nombreEquipo(elemUFS(findUFS(uFcolombia))) << endl;
     unionUFS(uFestadosUnidos, uFcolombia);
     cout << "El representante de Colombia post a la union con estados Unidos: " << nombreEquipo(elemUFS(findUFS(uFcolombia))) << endl;
-    return 0;
+    // En este punto, estados unidos es de grado 2.
+    // Creamos dos uF de rango 1.
+    unionUFS(uFhaiti, uFmexico); unionUFS(uFargentina, uFbolivia); 
+    // Unimos dos uF de rango 1, para que nos quede haiti como padre.
+    unionUFS(uFhaiti, uFargentina);
+    cout << "En este punto, el padre de argentina es haiti ya que tenian el mismo rango. findUFS(argentina): " << nombreEquipo(elemUFS(findUFS(uFargentina))) << endl;
+    // Un union de dos UFSet de mismo rango, hace que el padre del segundo sea el padre del primero.
+    unionUFS(uFestadosUnidos, uFargentina);
+    cout << "El padre de argentina tiene que ser estados unidos. Padre de argentina: " << nombreEquipo(elemUFS(findUFS(uFargentina))) << endl;
+    cout << "El padre de haiti tiene que ser estados unidos, ya que era el padre de argentina. Padre de haiti: " << nombreEquipo(elemUFS(findUFS(uFhaiti))) << endl;
+   
+    cout << "La direccion de memoria del padre de Estados Unidos: " << findUFS(uFestadosUnidos) << endl;
+    cout << "La direccion de memoria del padre de Argentia: " << findUFS(uFargentina) << endl;
+    unionUFS(uFestadosUnidos, uFargentina);
+    cout << "Realizar una union entre dos ufSet con el mismo padre, no modifica nada." << endl;
+    cout << "La direccion de memoria del padre de Estados Unidos: " << findUFS(uFestadosUnidos) << endl;
+    cout << "La direccion de memoria del padre de Argentia: " << findUFS(uFargentina) << endl;
+    cout << "La direccion de memoria del padre de Estados Unidos: " << findUFS(uFestadosUnidos) << endl;    
+     return 0;
 }
